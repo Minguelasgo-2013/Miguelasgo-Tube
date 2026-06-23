@@ -1,0 +1,44 @@
+{
+  "usuarios": {
+    "Miguelasgo_Corp": {
+      "sal": "d07a13ac6e298f41711aa7c88b95d9e0",
+      "hash": "98c26db7f16f685868f060c08c6fe1bd3e8425b02eb2cbf4927039dbad76af97",
+      "fecha_registro": 1782138130.8281183,
+      "suscripciones": [],
+      "suscriptores": [],
+      "notificaciones": [],
+      "historial": [
+        {
+          "video": "2612390ae377",
+          "fecha": 1782207011.994845,
+          "posicion": 0
+        }
+      ],
+      "bio": ""
+    },
+    "Paquito": {
+      "sal": "ee052db946ce8e45cbbdffef7929e0dc",
+      "hash": "12ad3db3f6e8c2eb4bde4172c86ce23662740d00a77fe93d75efeba84628483c",
+      "fecha_registro": 1782207101.4871855,
+      "suscripciones": [],
+      "suscriptores": [],
+      "notificaciones": [],
+      "historial": [],
+      "bio": ""
+    }
+  },
+  "sesiones": {
+    "3685b6d7ccfcd7c2516bb80fbcfdecdcf069e4a32db28dcf": {
+      "usuario": "Miguelasgo_Corp",
+      "expira": 1784730428.0206742
+    },
+    "2be132d99374a3b1b8df06fde142b6815933308eb506a3b1": {
+      "usuario": "Paquito",
+      "expira": 1784799101.6190922
+    },
+    "206d3cef093a80879e07e22ac51233f0988caa16cb00e288": {
+      "usuario": "Paquito",
+      "expira": 1784799140.0469928
+    }
+  }
+}

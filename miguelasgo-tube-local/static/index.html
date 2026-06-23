@@ -1,0 +1,2390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miguelasgo Tube</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #0f0f0f;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+}
+
+body.dark-mode { background: #0f0f0f; color: #f1f1f1; }
+html.dark-mode { background: #0f0f0f; }
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 18px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+body.dark-mode header { background: #0f0f0f; border-color: #303030; }
+
+.logo {
+    font-size: 21px;
+    font-weight: bold;
+    color: #0f0f0f;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    user-select: none;
+}
+
+body.dark-mode .logo { color: #f1f1f1; }
+
+.logo .play-icon {
+    width: 28px;
+    height: 28px;
+    background: #FF0000;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo .play-icon svg { width: 14px; height: 14px; }
+.logo span.tube { color: #FF0000; }
+
+.search-wrapper { flex: 1; max-width: 600px; margin: 0 auto; display: flex; }
+
+.search-box {
+    flex: 1;
+    padding: 9px 16px;
+    border: 1px solid #ccc;
+    border-right: none;
+    border-radius: 20px 0 0 20px;
+    font-size: 14px;
+    outline: none;
+    color: #0f0f0f;
+    background: #fff;
+}
+
+body.dark-mode .search-box { background: #121212; color: #f1f1f1; border-color: #303030; }
+.search-box:focus { border-color: #1c62b9; }
+
+.search-btn {
+    width: 60px;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #606060;
+}
+
+body.dark-mode .search-btn { background: #222; border-color: #303030; color: #aaa; }
+.search-btn:hover { background: #f0f0f0; }
+body.dark-mode .search-btn:hover { background: #2a2a2a; }
+
+.header-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #606060;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+
+.icon-btn:hover { background: #f0f0f0; }
+body.dark-mode .icon-btn { color: #aaa; }
+body.dark-mode .icon-btn:hover { background: #272727; }
+
+.btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 18px;
+    cursor: pointer;
+    color: #0f0f0f;
+    transition: background 0.15s;
+    font-family: Arial, sans-serif;
+}
+
+.btn:hover { background: #f0f0f0; }
+body.dark-mode .btn { background: #0f0f0f; color: #f1f1f1; border-color: #303030; }
+body.dark-mode .btn:hover { background: #272727; }
+
+.btn-primary { background: #065fd4; color: #fff; border-color: #065fd4; }
+.btn-primary:hover { background: #054aa6; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-subir {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #065fd4;
+    border: none;
+    background: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 10px;
+    border-radius: 18px;
+}
+
+.btn-subir:hover { background: #e8f0fe; }
+body.dark-mode .btn-subir:hover { background: #1a2733; }
+
+.mi-perfil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    padding: 6px 12px 6px 6px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: #0f0f0f;
+}
+
+body.dark-mode .mi-perfil { border-color: #303030; color: #f1f1f1; }
+.mi-perfil:hover { background: #f0f0f0; }
+body.dark-mode .mi-perfil:hover { background: #272727; }
+
+.estado-servidor {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.estado-servidor.online { background: #e6f4ea; color: #1e7e34; }
+.estado-servidor.offline { background: #fce8e6; color: #c5221f; }
+body.dark-mode .estado-servidor.online { background: #1a3324; color: #6fcf97; }
+body.dark-mode .estado-servidor.offline { background: #3a1f1f; color: #f28b82; }
+
+.punto-estado { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+main { max-width: 1500px; margin: 0 auto; padding: 24px; }
+
+.barra-categorias { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
+
+.cat-chip {
+    padding: 7px 14px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #0f0f0f;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.cat-chip:hover { background: #e5e5e5; }
+.cat-chip.activa { background: #0f0f0f; color: #fff; }
+
+body.dark-mode .cat-chip { background: #272727; color: #f1f1f1; }
+body.dark-mode .cat-chip:hover { background: #3f3f3f; }
+body.dark-mode .cat-chip.activa { background: #f1f1f1; color: #0f0f0f; }
+
+.grid-videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px 16px;
+}
+
+.video-card { cursor: pointer; }
+
+.thumb-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.thumb-wrapper video, .thumb-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.video-info { display: flex; gap: 10px; }
+
+.canal-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #065fd4;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.video-meta { min-width: 0; }
+
+.video-titulo {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #0f0f0f;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+body.dark-mode .video-titulo { color: #f1f1f1; }
+
+.video-canal, .video-stats {
+    font-size: 12.5px;
+    color: #606060;
+    cursor: pointer;
+}
+
+body.dark-mode .video-canal, body.dark-mode .video-stats { color: #aaa; }
+.video-stats { cursor: default; }
+
+.estado-carga { text-align: center; padding: 60px 20px; color: #606060; }
+body.dark-mode .estado-carga { color: #aaa; }
+
+.spinner {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border: 3px solid #ddd;
+    border-top-color: #FF0000;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#vista-player {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+}
+
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    color: #065fd4;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.player-video-wrapper {
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+}
+
+.player-video-wrapper video { width: 100%; height: 100%; display: block; }
+
+.player-titulo { font-size: 19px; font-weight: 600; margin: 16px 0 10px; line-height: 1.3; }
+
+.player-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 16px;
+}
+
+body.dark-mode .player-meta-row { border-color: #303030; }
+
+.player-canal-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.player-canal-textos { display: flex; flex-direction: column; }
+.player-canal-nombre { font-weight: 600; font-size: 15px; }
+.player-canal-stats { font-size: 12.5px; color: #606060; }
+body.dark-mode .player-canal-stats { color: #aaa; }
+
+.player-acciones { display: flex; gap: 8px; }
+
+.btn-like {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 18px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f0f0f;
+    transition: background 0.15s;
+}
+
+.btn-like:hover { background: #e5e5e5; }
+.btn-like.activo { background: #cce0ff; color: #065fd4; }
+
+body.dark-mode .btn-like { background: #272727; color: #f1f1f1; }
+body.dark-mode .btn-like:hover { background: #3f3f3f; }
+body.dark-mode .btn-like.activo { background: #1a2733; color: #5b9ef7; }
+
+.btn-dislike {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 18px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f0f0f;
+    transition: background 0.15s;
+}
+.btn-dislike:hover { background: #e5e5e5; }
+.btn-dislike.activo { background: #fce8e6; color: #d93025; }
+body.dark-mode .btn-dislike { background: #272727; color: #f1f1f1; }
+body.dark-mode .btn-dislike:hover { background: #3f3f3f; }
+body.dark-mode .btn-dislike.activo { background: #3a1f1f; color: #f28b82; }
+
+.btn-accion {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 18px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0f0f0f;
+    transition: background 0.15s;
+}
+.btn-accion:hover { background: #e5e5e5; }
+body.dark-mode .btn-accion { background: #272727; color: #f1f1f1; }
+body.dark-mode .btn-accion:hover { background: #3f3f3f; }
+
+.tags-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.tag-chip {
+    font-size: 11px;
+    background: #e8f0fe;
+    color: #065fd4;
+    border-radius: 4px;
+    padding: 2px 7px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.tag-chip:hover { background: #d2e3fc; }
+body.dark-mode .tag-chip { background: #1a2733; color: #5b9ef7; }
+body.dark-mode .tag-chip:hover { background: #223344; }
+
+.icon-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #d93025;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 8px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.btn-theater-activo .player-video-wrapper {
+    max-width: 100%;
+    border-radius: 0;
+}
+
+.noti-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 13.5px;
+}
+.noti-item:last-child { border-bottom: none; }
+.noti-item.no-leida { font-weight: 600; }
+.noti-item-titulo { color: #606060; font-size: 12px; }
+body.dark-mode .noti-item { border-color: #303030; }
+body.dark-mode .noti-item-titulo { color: #aaa; }
+
+/* ── Miniplayer ─────────────────────────────────────────────── */
+.miniplayer {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 320px;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    z-index: 300;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+}
+.miniplayer video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: block;
+    background: #000;
+}
+.mini-controls {
+    display: flex;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #1a1a1a;
+    align-items: center;
+}
+.mini-titulo {
+    flex: 1;
+    color: #f1f1f1;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.mini-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 11.5px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+.mini-btn:hover { background: #333; color: #fff; }
+.mini-btn.mini-btn-primary { color: #5b9ef7; }
+
+/* ── Banner continuar donde lo dejaste ─────────────────────── */
+.banner-continuar {
+    display: none;
+    background: #e8f0fe;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 13.5px;
+    color: #1a1a1a;
+    align-items: center;
+    gap: 10px;
+}
+.banner-continuar.visible { display: flex; }
+body.dark-mode .banner-continuar { background: #1a2733; color: #f1f1f1; }
+.banner-continuar-btn {
+    background: #065fd4;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+}
+.banner-continuar-btn:hover { background: #054aa6; }
+.banner-continuar-cerrar {
+    background: none;
+    border: none;
+    color: #606060;
+    cursor: pointer;
+    font-size: 15px;
+    margin-left: auto;
+    padding: 0 4px;
+}
+
+/* ── Canal bio ──────────────────────────────────────────────── */
+.canal-bio {
+    font-size: 13.5px;
+    color: #606060;
+    margin: 6px 0 0 0;
+    max-width: 600px;
+    line-height: 1.5;
+}
+body.dark-mode .canal-bio { color: #aaa; }
+.canal-bio-editar {
+    font-size: 12px;
+    color: #065fd4;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+}
+.canal-bio-editar:hover { background: #e8f0fe; }
+body.dark-mode .canal-bio-editar:hover { background: #1a2733; }
+.canal-bio-form {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 6px;
+    max-width: 480px;
+}
+.canal-bio-form.visible { display: flex; }
+.canal-bio-form textarea {
+    resize: vertical;
+    min-height: 56px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #0f0f0f;
+}
+body.dark-mode .canal-bio-form textarea { background: #1a1a1a; color: #f1f1f1; border-color: #303030; }
+.canal-bio-acciones { display: flex; gap: 8px; }
+
+/* ── Stats modal ────────────────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0 6px;
+}
+.stat-card {
+    background: #f1f1f1;
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+}
+body.dark-mode .stat-card { background: #1e1e1e; }
+.stat-card-valor {
+    font-size: 26px;
+    font-weight: 700;
+    color: #065fd4;
+}
+body.dark-mode .stat-card-valor { color: #5b9ef7; }
+.stat-card-label {
+    font-size: 12px;
+    color: #606060;
+    margin-top: 2px;
+}
+body.dark-mode .stat-card-label { color: #aaa; }
+
+/* ── Atajos teclado ─────────────────────────────────────────── */
+.atajos-lista {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 18px;
+    font-size: 13.5px;
+    margin: 10px 0;
+}
+kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 24px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    color: #0f0f0f;
+    padding: 0 6px;
+    white-space: nowrap;
+}
+body.dark-mode kbd { background: #272727; border-color: #555; color: #f1f1f1; }
+
+/* ── Respuestas a comentarios ───────────────────────────────── */
+.comentario-respuestas { margin-left: 48px; }
+.respuesta-item { display: flex; gap: 10px; margin-top: 12px; }
+.btn-responder {
+    background: none;
+    border: none;
+    color: #065fd4;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+.btn-responder:hover { background: #e8f0fe; }
+body.dark-mode .btn-responder { color: #5b9ef7; }
+body.dark-mode .btn-responder:hover { background: #1a2733; }
+.reply-form-inline {
+    display: none;
+    margin-top: 8px;
+    margin-left: 48px;
+    gap: 8px;
+    flex-direction: column;
+}
+.reply-form-inline.visible { display: flex; }
+.reply-form-inline textarea {
+    resize: vertical;
+    min-height: 48px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #0f0f0f;
+}
+body.dark-mode .reply-form-inline textarea { background: #1a1a1a; color: #f1f1f1; border-color: #303030; }
+.reply-form-acciones { display: flex; gap: 8px; }
+
+/* ── Editar vídeo ───────────────────────────────────────────── */
+.btn-editar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 18px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: #0f0f0f;
+    font-family: Arial, sans-serif;
+    transition: background 0.15s;
+}
+.btn-editar:hover { background: #f0f0f0; }
+body.dark-mode .btn-editar { border-color: #303030; color: #f1f1f1; }
+body.dark-mode .btn-editar:hover { background: #272727; }
+
+.btn-eliminar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid #d93025;
+    color: #d93025;
+    border-radius: 18px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-eliminar:hover { background: #fce8e6; }
+body.dark-mode .btn-eliminar { border-color: #f28b82; color: #f28b82; }
+body.dark-mode .btn-eliminar:hover { background: #3a1f1f; }
+
+.player-descripcion {
+    background: #f1f1f1;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #0f0f0f;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin-bottom: 20px;
+}
+
+body.dark-mode .player-descripcion { background: #272727; color: #f1f1f1; }
+.player-descripcion-stats { font-weight: 600; margin-bottom: 6px; }
+
+.comentarios-seccion { max-width: 800px; }
+.comentarios-titulo { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+
+.comentario-form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+    align-items: flex-start;
+}
+
+.comentario-form-row .canal-avatar { cursor: default; }
+.comentario-inputs { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+.comentario-inputs textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    font-family: Arial, sans-serif;
+    background: transparent;
+    color: #0f0f0f;
+    resize: none;
+}
+
+body.dark-mode .comentario-inputs textarea { color: #f1f1f1; border-color: #303030; }
+.comentario-inputs textarea:focus { border-color: #065fd4; }
+
+.comentario-acciones-form { display: flex; justify-content: flex-end; gap: 8px; }
+
+.comentario-item { display: flex; gap: 10px; margin-bottom: 18px; }
+.comentario-cuerpo { flex: 1; min-width: 0; }
+
+.comentario-cabecera { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+.comentario-autor { font-size: 13px; font-weight: 600; cursor: pointer; }
+.comentario-fecha { font-size: 12px; color: #606060; }
+body.dark-mode .comentario-fecha { color: #aaa; }
+
+.comentario-texto { font-size: 14px; line-height: 1.4; word-break: break-word; }
+
+.comentario-borrar {
+    background: none;
+    border: none;
+    color: #909090;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 0;
+    margin-top: 2px;
+}
+
+.comentario-borrar:hover { color: #d93025; }
+.comentarios-vacio { font-size: 13.5px; color: #909090; padding: 10px 0; }
+
+.aviso-login-comentar {
+    font-size: 13.5px;
+    color: #606060;
+    background: #f1f1f1;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 22px;
+}
+
+body.dark-mode .aviso-login-comentar { background: #272727; color: #aaa; }
+.aviso-login-comentar a { color: #065fd4; cursor: pointer; font-weight: 600; }
+
+#vista-canal {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.canal-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+body.dark-mode .canal-cabecera { border-color: #303030; }
+
+.canal-avatar-grande {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: #065fd4;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.canal-nombre-grande { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.canal-stats-grande { font-size: 13.5px; color: #606060; }
+body.dark-mode .canal-stats-grande { color: #aaa; }
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    width: 420px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+body.dark-mode .modal { background: #212121; color: #f1f1f1; }
+
+.modal h3 { font-size: 19px; font-weight: 600; margin-bottom: 6px; }
+.modal .subtitulo { font-size: 13px; color: #606060; margin-bottom: 18px; }
+body.dark-mode .modal .subtitulo { color: #aaa; }
+
+.modal label {
+    display: block;
+    font-size: 13px;
+    color: #606060;
+    margin-bottom: 4px;
+    margin-top: 14px;
+}
+
+body.dark-mode .modal label { color: #aaa; }
+
+.modal input, .modal textarea, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+    color: #0f0f0f;
+    background: #fff;
+}
+
+body.dark-mode .modal input, body.dark-mode .modal textarea, body.dark-mode .modal select {
+    background: #121212;
+    color: #f1f1f1;
+    border-color: #303030;
+}
+
+.modal input:focus, .modal textarea:focus, .modal select:focus { border-color: #065fd4; }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 22px; justify-content: flex-end; }
+
+.modal-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #606060;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+
+body.dark-mode .modal-close { color: #aaa; }
+
+.modal-switch {
+    text-align: center;
+    font-size: 13px;
+    color: #606060;
+    margin-top: 16px;
+}
+
+body.dark-mode .modal-switch { color: #aaa; }
+.modal-switch a { color: #065fd4; cursor: pointer; font-weight: 600; }
+
+.file-drop {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    color: #606060;
+    font-size: 13.5px;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.file-drop:hover { border-color: #065fd4; background: #f5f9ff; }
+body.dark-mode .file-drop { border-color: #303030; color: #aaa; }
+body.dark-mode .file-drop:hover { border-color: #5b9ef7; background: #16202c; }
+.file-drop.con-archivo { border-style: solid; border-color: #34a853; color: #0f0f0f; }
+body.dark-mode .file-drop.con-archivo { color: #f1f1f1; }
+
+.progreso-wrapper { margin-top: 14px; display: none; }
+
+.progreso-barra-fondo {
+    width: 100%;
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+body.dark-mode .progreso-barra-fondo { background: #303030; }
+
+.progreso-barra { height: 100%; width: 0%; background: #FF0000; transition: width 0.2s; }
+.progreso-texto { font-size: 12px; color: #606060; margin-top: 5px; }
+body.dark-mode .progreso-texto { color: #aaa; }
+
+.error-msg { color: #d93025; font-size: 13px; margin-top: 8px; }
+body.dark-mode .error-msg { color: #f28b82; }
+
+.toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #323232;
+    color: #fff;
+    padding: 12px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 400;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-width: 90vw;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+.vacio-estado { text-align: center; padding: 80px 20px; color: #606060; }
+body.dark-mode .vacio-estado { color: #aaa; }
+
+.banner-offline {
+    display: none;
+    background: #fce8e6;
+    color: #c5221f;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+}
+
+body.dark-mode .banner-offline { background: #3a1f1f; color: #f28b82; }
+.banner-offline.visible { display: block; }
+
+.menu-perfil {
+    display: none;
+    position: absolute;
+    top: 56px;
+    right: 18px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    min-width: 180px;
+    z-index: 200;
+    overflow: hidden;
+}
+
+.menu-perfil.activo { display: block; }
+body.dark-mode .menu-perfil { background: #212121; border-color: #303030; }
+
+.menu-perfil-item {
+    padding: 12px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #0f0f0f;
+}
+
+.menu-perfil-item:hover { background: #f1f1f1; }
+body.dark-mode .menu-perfil-item { color: #f1f1f1; }
+body.dark-mode .menu-perfil-item:hover { background: #272727; }
+</style>
+</head>
+<body>
+
+<div class="banner-offline" id="banner-offline">
+    ⚠️ No se puede conectar con el servidor local. Comprueba que <code>server.py</code> esté corriendo.
+</div>
+
+<header>
+    <div class="logo" id="logo-home">
+        <span class="play-icon"><svg viewBox="0 0 24 24" fill="#fff"><polygon points="6,4 20,12 6,20"/></svg></span>
+        Miguelasgo<span class="tube">Tube</span>
+    </div>
+
+    <div class="search-wrapper">
+        <input type="text" class="search-box" id="buscar-input" placeholder="Buscar vídeos, tags..." autocomplete="off">
+        <button class="search-btn" id="btn-buscar" title="Buscar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+    </div>
+
+    <div class="header-actions" style="position:relative;">
+        <span class="estado-servidor online" id="estado-servidor"><span class="punto-estado"></span>Conectando…</span>
+        <button class="icon-btn" id="notificaciones-btn" title="Notificaciones" style="position:relative;">
+            🔔
+            <span class="icon-badge" id="noti-badge" style="display:none">0</span>
+        </button>
+
+        <button class="icon-btn" id="theme-toggle" title="Tema">🌙</button>
+
+        <button class="btn-subir" id="btn-subir" title="Subir vídeo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            Subir
+        </button>
+        <button class="mi-perfil" id="btn-mi-perfil" title="Mi cuenta">
+            <span class="canal-avatar" id="mi-perfil-avatar" style="width:26px;height:26px;font-size:12px;cursor:default;">?</span>
+            <span id="mi-perfil-nombre">Acceder</span>
+        </button>
+        <div class="menu-perfil" id="menu-perfil">
+            <div class="menu-perfil-item" id="menu-ver-canal">Mi canal</div>
+            <div class="menu-perfil-item" id="menu-cerrar-sesion">Cerrar sesión</div>
+        </div>
+    </div>
+</header>
+
+<main id="vista-grid">
+    <div class="barra-categorias" id="barra-categorias"></div>
+    <div class="grid-videos" id="grid-videos">
+        <div class="estado-carga"><span class="spinner"></span>Cargando vídeos…</div>
+    </div>
+</main>
+
+<div id="vista-player">
+    <button class="btn-volver" id="btn-volver">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver
+    </button>
+
+    <div class="player-video-wrapper"><video id="player-video" controls></video></div>
+
+    <div class="player-titulo" id="player-titulo"></div>
+
+    <div class="player-meta-row">
+        <div class="player-canal-info" id="player-canal-info">
+            <div class="canal-avatar" id="player-canal-avatar"></div>
+            <div class="player-canal-textos">
+                <span class="player-canal-nombre" id="player-canal-nombre"></span>
+                <span class="player-canal-stats" id="player-canal-stats"></span>
+            </div>
+        </div>
+        <div class="player-acciones">
+            <button class="btn-like" id="btn-like">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+                <span id="like-count">0</span>
+            </button>
+            <button class="btn-dislike" id="btn-dislike">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H6.72A2 2 0 0 0 5 3.7L3.62 12.7A2 2 0 0 0 5.62 15H10z"/><path d="M17 2h3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-3"/></svg>
+                <span id="dislike-count">0</span>
+            </button>
+            <button class="btn-accion" id="btn-share">Compartir</button>
+            <button class="btn-accion" id="btn-theater" title="Modo teatro">Teatro</button>
+            <button class="btn-eliminar" id="btn-eliminar" style="display:none;">🗑 Eliminar</button>
+        </div>
+    </div>
+
+    <div class="player-descripcion">
+        <div class="player-descripcion-stats" id="player-stats"></div>
+        <div id="player-tags" style="margin-bottom:8px"></div>
+        <div id="player-descripcion-texto"></div>
+    </div>
+
+    <div class="comentarios-seccion">
+        <div class="comentarios-titulo" id="comentarios-titulo">Comentarios</div>
+        <div id="comentario-form-wrapper"></div>
+        <div id="lista-comentarios"></div>
+    </div>
+</div>
+
+<div id="vista-canal">
+    <button class="btn-volver" id="btn-volver-canal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver
+    </button>
+
+    <div class="canal-cabecera">
+        <div class="canal-avatar-grande" id="canal-avatar-grande">?</div>
+        <div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="canal-nombre-grande" id="canal-nombre-grande"></div>
+              <button class="btn-primary" id="btn-suscribir">Suscribirse</button>
+            </div>
+            <div class="canal-stats-grande" id="canal-stats-grande"></div>
+        </div>
+    </div>
+
+    <div class="grid-videos" id="canal-grid-videos"></div>
+</div>
+
+<div class="modal-overlay" id="login-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('login-overlay')">✕</button>
+        <h3>Iniciar sesión</h3>
+        <div class="subtitulo">Accede con tu usuario y contraseña.</div>
+
+        <label>Usuario</label>
+        <input type="text" id="login-usuario" placeholder="tu_usuario" maxlength="24" autocomplete="username">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="Contraseña" autocomplete="current-password">
+        <div id="login-error" class="error-msg" style="display:none;"></div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="cerrarModal('login-overlay')">Cancelar</button>
+            <button class="btn btn-primary" id="btn-hacer-login">Entrar</button>
+        </div>
+        <div class="modal-switch">¿No tienes cuenta? <a id="ir-a-registro">Regístrate</a></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="registro-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('registro-overlay')">✕</button>
+        <h3>Crear cuenta</h3>
+        <div class="subtitulo">
+            Solo tú sabrás tu contraseña — nunca se guarda tal cual, ni
+            siquiera nosotros podemos verla.
+        </div>
+
+        <label>Usuario</label>
+        <input type="text" id="registro-usuario" placeholder="entre 3 y 24 letras/números" maxlength="24" autocomplete="username">
+        <label>Contraseña</label>
+        <input type="password" id="registro-password" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+        <label>Repite la contraseña</label>
+        <input type="password" id="registro-password2" placeholder="repite la contraseña" autocomplete="new-password">
+        <div id="registro-error" class="error-msg" style="display:none;"></div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="cerrarModal('registro-overlay')">Cancelar</button>
+            <button class="btn btn-primary" id="btn-hacer-registro">Crear cuenta</button>
+        </div>
+        <div class="modal-switch">¿Ya tienes cuenta? <a id="ir-a-login">Inicia sesión</a></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="subir-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('subir-overlay')">✕</button>
+        <h3>📤 Subir vídeo</h3>
+
+        <div class="file-drop" id="file-drop">
+            <span id="file-drop-texto">Haz clic para elegir un archivo de vídeo (mp4, webm, mov...)</span>
+        </div>
+        <input type="file" id="file-input" accept="video/*" style="display:none;">
+
+        <div class="progreso-wrapper" id="progreso-wrapper">
+            <div class="progreso-barra-fondo"><div class="progreso-barra" id="progreso-barra"></div></div>
+            <div class="progreso-texto" id="progreso-texto">0%</div>
+        </div>
+
+        <label>Título *</label>
+        <input type="text" id="subir-titulo" placeholder="Título del vídeo" maxlength="100">
+
+        <label>Descripción</label>
+        <textarea id="subir-descripcion" rows="3" placeholder="Cuenta algo sobre tu vídeo..." maxlength="500"></textarea>
+
+        <label>Tags (separados por comas)</label>
+        <input type="text" id="subir-tags" placeholder="ej: javascript,tutorial,web" maxlength="200">
+
+        <label>Visibilidad</label>
+        <select id="subir-visibilidad">
+            <option value="publico">Público</option>
+            <option value="privado">Privado (solo tú y tus suscriptores)</option>
+        </select>
+
+        <label>Categoría</label>
+        <select id="subir-categoria">
+            <option value="Otros">Otros</option>
+            <option value="Gaming">Gaming</option>
+            <option value="Tecnología">Tecnología</option>
+            <option value="Música">Música</option>
+            <option value="Educación">Educación</option>
+            <option value="Vlog">Vlog</option>
+            <option value="Tutorial">Tutorial</option>
+            <option value="Humor">Humor</option>
+        </select>
+
+        <div id="subir-error" class="error-msg" style="display:none;"></div>
+
+        <div class="modal-actions">
+            <button class="btn" id="btn-cancelar-subida" onclick="cerrarModal('subir-overlay')">Cancelar</button>
+            <button class="btn btn-primary" id="btn-confirmar-subida">Subir vídeo</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="report-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('report-overlay')">✕</button>
+        <h3>Reportar vídeo</h3>
+        <div class="subtitulo">Selecciona el motivo y añade un comentario si lo deseas.</div>
+
+        <label>Motivo</label>
+        <select id="report-motivo">
+            <option value="spam">Spam o publicidad no deseada</option>
+            <option value="contenido_inapropiado">Contenido inapropiado</option>
+            <option value="derechos">Violación de derechos de autor</option>
+            <option value="otro">Otro</option>
+        </select>
+        <label>Comentario (opcional)</label>
+        <textarea id="report-comentario" rows="3"></textarea>
+        <div id="report-error" class="error-msg" style="display:none;"></div>
+
+        <div class="modal-actions">
+            <button class="btn" onclick="cerrarModal('report-overlay')">Cancelar</button>
+            <button class="btn btn-primary" id="btn-confirmar-report">Enviar reporte</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="noti-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('noti-overlay')">✕</button>
+        <h3>Notificaciones</h3>
+        <div id="noti-list" style="max-height:60vh; overflow:auto; margin-top:10px;"></div>
+        <div class="modal-actions">
+            <button class="btn" onclick="marcarNotificacionesLeidas()">Marcar todas como leídas</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="miniplayer" id="miniplayer" style="display:none;">
+    <video id="mini-video" controls muted></video>
+    <div class="mini-controls">
+        <button class="btn" id="mini-open">Abrir</button>
+        <button class="btn" id="mini-close">Cerrar</button>
+    </div>
+</div>
+
+<script>
+const API = '/api';
+
+let categoriaActiva = null;
+let terminoBusqueda = '';
+let videoActualId = null;
+let archivoSeleccionado = null;
+let canalActual = null;
+
+const CLAVE_SESION = 'miguelasgotube_sesion';
+const CLAVE_USUARIO = 'miguelasgotube_usuario';
+
+function obtenerSesion() { return localStorage.getItem(CLAVE_SESION) || ''; }
+function guardarSesion(token, usuario) {
+    localStorage.setItem(CLAVE_SESION, token);
+    localStorage.setItem(CLAVE_USUARIO, usuario);
+}
+function obtenerUsuarioLocal() { return localStorage.getItem(CLAVE_USUARIO) || ''; }
+function borrarSesionLocal() {
+    localStorage.removeItem(CLAVE_SESION);
+    localStorage.removeItem(CLAVE_USUARIO);
+}
+
+function cabecerasAuth() {
+    const token = obtenerSesion();
+    return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
+
+const CATEGORIAS = ['Todos','Gaming','Tecnología','Música','Educación','Vlog','Tutorial','Humor','Otros'];
+
+const CLAVE_TEMA = 'miguelasgotube_tema';
+
+function inicializarTema() {
+    const guardado = localStorage.getItem(CLAVE_TEMA);
+    const oscuro = guardado ? JSON.parse(guardado) : false;
+    if (oscuro) {
+        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+        document.documentElement.classList.remove('dark-mode');
+    }
+    actualizarBotonTema();
+}
+
+function actualizarBotonTema() {
+    document.getElementById('theme-toggle').textContent =
+        document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+}
+
+document.getElementById('theme-toggle').onclick = () => {
+    document.body.classList.toggle('dark-mode');
+    document.documentElement.classList.toggle('dark-mode');
+    localStorage.setItem(CLAVE_TEMA, JSON.stringify(document.body.classList.contains('dark-mode')));
+    actualizarBotonTema();
+};
+
+function mostrarToast(msg, duracion = 3000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duracion);
+}
+
+function escHTML(str) {
+    return String(str || '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+function inicialDe(texto) { return (texto || '?').trim().charAt(0).toUpperCase() || '?'; }
+
+function formatearNumero(n) {
+    n = n || 0;
+    if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
+    if (n >= 1000) return (n/1000).toFixed(1).replace('.0','') + 'K';
+    return String(n);
+}
+
+function tiempoRelativo(timestampSegundos) {
+    if (!timestampSegundos) return '';
+    const ahoraMs = Date.now();
+    const fechaMs = timestampSegundos * 1000;
+    const diffDias = Math.floor((ahoraMs - fechaMs) / 86400000);
+    if (diffDias <= 0) return 'Hoy';
+    if (diffDias === 1) return 'Hace 1 día';
+    if (diffDias < 30) return `Hace ${diffDias} días`;
+    const diffMeses = Math.floor(diffDias / 30);
+    if (diffMeses < 12) return `Hace ${diffMeses} mes${diffMeses !== 1 ? 'es' : ''}`;
+    const diffAnios = Math.floor(diffMeses / 12);
+    return `Hace ${diffAnios} año${diffAnios !== 1 ? 's' : ''}`;
+}
+
+function actualizarBotonPerfil() {
+    const usuario = obtenerUsuarioLocal();
+    const nombreEl = document.getElementById('mi-perfil-nombre');
+    const avatarEl = document.getElementById('mi-perfil-avatar');
+    if (usuario) {
+        nombreEl.textContent = usuario;
+        avatarEl.textContent = inicialDe(usuario);
+    } else {
+        nombreEl.textContent = 'Acceder';
+        avatarEl.textContent = '?';
+    }
+}
+
+document.getElementById('btn-mi-perfil').onclick = (e) => {
+    e.stopPropagation();
+    const usuario = obtenerUsuarioLocal();
+    if (!usuario) {
+        abrirLogin();
+        return;
+    }
+    document.getElementById('menu-perfil').classList.toggle('activo');
+};
+
+document.addEventListener('click', () => {
+    document.getElementById('menu-perfil').classList.remove('activo');
+});
+
+document.getElementById('menu-ver-canal').onclick = () => {
+    document.getElementById('menu-perfil').classList.remove('activo');
+    const usuario = obtenerUsuarioLocal();
+    if (usuario) abrirCanal(usuario);
+};
+
+document.getElementById('menu-cerrar-sesion').onclick = async () => {
+    document.getElementById('menu-perfil').classList.remove('activo');
+    try {
+        await fetch(`${API}/auth/logout?sesion=${encodeURIComponent(obtenerSesion())}`, { method: 'POST' });
+    } catch (e) { /* no pasa nada si falla, igualmente borramos local */ }
+    borrarSesionLocal();
+    actualizarBotonPerfil();
+    mostrarToast('Sesión cerrada.');
+    volverAGrid();
+    cargarVideos();
+};
+
+function abrirLogin() {
+    document.getElementById('login-usuario').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-error').style.display = 'none';
+    abrirModal('login-overlay');
+}
+
+function abrirRegistro() {
+    document.getElementById('registro-usuario').value = '';
+    document.getElementById('registro-password').value = '';
+    document.getElementById('registro-password2').value = '';
+    document.getElementById('registro-error').style.display = 'none';
+    abrirModal('registro-overlay');
+}
+
+document.getElementById('ir-a-registro').onclick = () => {
+    cerrarModal('login-overlay');
+    abrirRegistro();
+};
+
+document.getElementById('ir-a-login').onclick = () => {
+    cerrarModal('registro-overlay');
+    abrirLogin();
+};
+
+document.getElementById('btn-hacer-login').onclick = async () => {
+    const usuario = document.getElementById('login-usuario').value.trim();
+    const password = document.getElementById('login-password').value;
+    const err = document.getElementById('login-error');
+    err.style.display = 'none';
+
+    if (!usuario || !password) {
+        err.textContent = 'Rellena usuario y contraseña.';
+        err.style.display = 'block';
+        return;
+    }
+
+    const btn = document.getElementById('btn-hacer-login');
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+
+    try {
+        const res = await fetch(`${API}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'No se pudo iniciar sesión.');
+
+        guardarSesion(data.sesion, data.usuario);
+        actualizarBotonPerfil();
+        cerrarModal('login-overlay');
+        mostrarToast(`¡Bienvenido, ${data.usuario}!`);
+        cargarVideos();
+    } catch (e) {
+        err.textContent = e.message;
+        err.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
+    }
+};
+
+document.getElementById('btn-hacer-registro').onclick = async () => {
+    const usuario = document.getElementById('registro-usuario').value.trim();
+    const password = document.getElementById('registro-password').value;
+    const password2 = document.getElementById('registro-password2').value;
+    const err = document.getElementById('registro-error');
+    err.style.display = 'none';
+
+    if (!usuario || !password) {
+        err.textContent = 'Rellena todos los campos.';
+        err.style.display = 'block';
+        return;
+    }
+    if (password !== password2) {
+        err.textContent = 'Las contraseñas no coinciden.';
+        err.style.display = 'block';
+        return;
+    }
+
+    const btn = document.getElementById('btn-hacer-registro');
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+
+    try {
+        const res = await fetch(`${API}/auth/registro`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'No se pudo crear la cuenta.');
+
+        guardarSesion(data.sesion, data.usuario);
+        actualizarBotonPerfil();
+        cerrarModal('registro-overlay');
+        mostrarToast(`¡Cuenta creada! Bienvenido, ${data.usuario}.`);
+        cargarVideos();
+    } catch (e) {
+        err.textContent = e.message;
+        err.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Crear cuenta';
+    }
+};
+
+[document.getElementById('login-usuario'), document.getElementById('login-password')].forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-hacer-login').click(); });
+});
+[document.getElementById('registro-usuario'), document.getElementById('registro-password'), document.getElementById('registro-password2')].forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-hacer-registro').click(); });
+});
+
+async function comprobarServidor() {
+    const badge = document.getElementById('estado-servidor');
+    const banner = document.getElementById('banner-offline');
+    try {
+        const res = await fetch(`${API}/videos`, { method: 'GET' });
+        if (!res.ok) throw new Error();
+        badge.className = 'estado-servidor online';
+        badge.innerHTML = '<span class="punto-estado"></span>Servidor conectado';
+        banner.classList.remove('visible');
+        return true;
+    } catch (e) {
+        badge.className = 'estado-servidor offline';
+        badge.innerHTML = '<span class="punto-estado"></span>Servidor desconectado';
+        banner.classList.add('visible');
+        return false;
+    }
+}
+
+function renderCategorias() {
+    const cont = document.getElementById('barra-categorias');
+    cont.innerHTML = '';
+    CATEGORIAS.forEach(cat => {
+        const btn = document.createElement('button');
+        const valor = cat === 'Todos' ? null : cat;
+        btn.className = 'cat-chip' + (categoriaActiva === valor ? ' activa' : '');
+        btn.textContent = cat;
+        btn.onclick = () => {
+            categoriaActiva = valor;
+            renderCategorias();
+            cargarVideos();
+        };
+        cont.appendChild(btn);
+    });
+}
+
+async function cargarVideos() {
+    const grid = document.getElementById('grid-videos');
+    grid.innerHTML = '<div class="estado-carga"><span class="spinner"></span>Cargando vídeos…</div>';
+
+    const params = new URLSearchParams();
+    if (terminoBusqueda) params.set('q', terminoBusqueda);
+    if (categoriaActiva) params.set('categoria', categoriaActiva);
+
+    try {
+        const res = await fetch(`${API}/videos?${params.toString()}`);
+        if (!res.ok) throw new Error('Respuesta no válida del servidor');
+        const videos = await res.json();
+
+        document.getElementById('estado-servidor').className = 'estado-servidor online';
+        document.getElementById('estado-servidor').innerHTML = '<span class="punto-estado"></span>Servidor conectado';
+        document.getElementById('banner-offline').classList.remove('visible');
+
+        if (videos.length === 0) {
+            grid.innerHTML = `<div class="vacio-estado">📹 No se encontraron vídeos.<br>¡Sé el primero en subir uno!</div>`;
+            return;
+        }
+
+        grid.innerHTML = '';
+        videos.forEach(v => grid.appendChild(crearTarjetaVideo(v)));
+
+    } catch (e) {
+        grid.innerHTML = `<div class="vacio-estado">⚠️ No se pudo conectar con el servidor local.<br>Comprueba que <code>server.py</code> esté corriendo.</div>`;
+        document.getElementById('estado-servidor').className = 'estado-servidor offline';
+        document.getElementById('estado-servidor').innerHTML = '<span class="punto-estado"></span>Servidor desconectado';
+        document.getElementById('banner-offline').classList.add('visible');
+    }
+}
+
+function miniaturaSrc(v) {
+    return v.miniatura ? `/thumbs/${encodeURIComponent(v.miniatura)}` : null;
+}
+
+function crearTarjetaVideo(v) {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.onclick = () => abrirPlayer(v);
+
+    const thumbWrapper = document.createElement('div');
+    thumbWrapper.className = 'thumb-wrapper';
+
+    const srcThumb = miniaturaSrc(v);
+    if (srcThumb) {
+        const img = document.createElement('img');
+        img.src = srcThumb;
+        img.loading = 'lazy';
+        img.alt = v.titulo;
+        thumbWrapper.appendChild(img);
+    } else {
+        const videoThumb = document.createElement('video');
+        videoThumb.src = `/videos/${encodeURIComponent(v.archivo)}#t=0.5`;
+        videoThumb.muted = true;
+        videoThumb.preload = 'metadata';
+        thumbWrapper.appendChild(videoThumb);
+    }
+
+    const info = document.createElement('div');
+    info.className = 'video-info';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'canal-avatar';
+    avatar.textContent = inicialDe(v.autor);
+    avatar.onclick = (e) => { e.stopPropagation(); abrirCanal(v.autor); };
+
+    const meta = document.createElement('div');
+    meta.className = 'video-meta';
+    const tagsHtml = (v.tags && v.tags.length) ? `<div class="tags-row">${v.tags.slice(0,3).map(t=>`<span class="tag-chip" data-tag="${escHTML(t)}">${escHTML(t)}</span>`).join('')}</div>` : '';
+    meta.innerHTML = `
+        <div class="video-titulo">${escHTML(v.titulo)}</div>
+        <div class="video-canal">${escHTML(v.autor || 'Anónimo')}</div>
+        <div class="video-stats">${formatearNumero(v.vistas)} visitas · ${tiempoRelativo(v.fecha)}</div>
+        ${tagsHtml}
+    `;
+    meta.querySelector('.video-canal').onclick = (e) => { e.stopPropagation(); abrirCanal(v.autor); };
+
+    meta.querySelectorAll('.tag-chip').forEach(el => {
+        el.onclick = (e) => {
+            e.stopPropagation();
+            terminoBusqueda = '';
+            categoriaActiva = null;
+            renderCategorias();
+            document.getElementById('buscar-input').value = el.dataset.tag;
+            terminoBusqueda = el.dataset.tag;
+            cargarVideos();
+            mostrarToast(`Buscando tag: ${el.dataset.tag}`);
+        };
+    });
+
+    info.appendChild(avatar);
+    info.appendChild(meta);
+    card.appendChild(thumbWrapper);
+    card.appendChild(info);
+    return card;
+}
+
+document.getElementById('btn-buscar').onclick = ejecutarBusqueda;
+document.getElementById('buscar-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') ejecutarBusqueda();
+});
+
+function ejecutarBusqueda() {
+    terminoBusqueda = document.getElementById('buscar-input').value.trim();
+    cargarVideos();
+}
+
+document.getElementById('logo-home').onclick = () => {
+    document.getElementById('buscar-input').value = '';
+    terminoBusqueda = '';
+    categoriaActiva = null;
+    renderCategorias();
+    volverAGrid();
+    cargarVideos();
+};
+
+document.getElementById('btn-subir').onclick = () => {
+    if (!obtenerUsuarioLocal()) {
+        mostrarToast('Inicia sesión para poder subir vídeos.');
+        abrirLogin();
+        return;
+    }
+
+    archivoSeleccionado = null;
+    document.getElementById('file-input').value = '';
+    document.getElementById('file-drop').classList.remove('con-archivo');
+    document.getElementById('file-drop-texto').textContent = 'Haz clic para elegir un archivo de vídeo (mp4, webm, mov...)';
+    document.getElementById('subir-titulo').value = '';
+    document.getElementById('subir-descripcion').value = '';
+    document.getElementById('subir-tags').value = '';
+    document.getElementById('subir-categoria').value = 'Otros';
+    document.getElementById('subir-visibilidad').value = 'publico';
+    document.getElementById('subir-error').style.display = 'none';
+    document.getElementById('progreso-wrapper').style.display = 'none';
+    document.getElementById('btn-confirmar-subida').disabled = false;
+    document.getElementById('btn-confirmar-subida').textContent = 'Subir vídeo';
+    abrirModal('subir-overlay');
+};
+
+document.getElementById('file-drop').onclick = () => document.getElementById('file-input').click();
+
+document.getElementById('file-input').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('video/')) {
+        mostrarToast('Por favor selecciona un archivo de vídeo válido.');
+        return;
+    }
+    const limiteMB = 500;
+    if (file.size > limiteMB * 1024 * 1024) {
+        mostrarToast(`El archivo supera el límite de ${limiteMB}MB.`);
+        return;
+    }
+    archivoSeleccionado = file;
+    document.getElementById('file-drop').classList.add('con-archivo');
+    document.getElementById('file-drop-texto').textContent =
+        `✅ ${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+});
+
+document.getElementById('btn-confirmar-subida').onclick = () => {
+    const titulo = document.getElementById('subir-titulo').value.trim();
+    const descripcion = document.getElementById('subir-descripcion').value.trim();
+    const categoria = document.getElementById('subir-categoria').value;
+    const tagsRaw = document.getElementById('subir-tags').value.trim();
+    const visibilidad = document.getElementById('subir-visibilidad').value || 'publico';
+    const errEl = document.getElementById('subir-error');
+    errEl.style.display = 'none';
+
+    if (!obtenerUsuarioLocal()) {
+        errEl.textContent = 'Debes iniciar sesión para subir vídeos.';
+        errEl.style.display = 'block';
+        return;
+    }
+    if (!archivoSeleccionado) {
+        errEl.textContent = 'Selecciona un archivo de vídeo.';
+        errEl.style.display = 'block';
+        return;
+    }
+    if (!titulo) {
+        errEl.textContent = 'El título es obligatorio.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    const btn = document.getElementById('btn-confirmar-subida');
+    const btnCancelar = document.getElementById('btn-cancelar-subida');
+    btn.disabled = true;
+    btnCancelar.disabled = true;
+    btn.textContent = 'Subiendo...';
+
+    const progresoWrapper = document.getElementById('progreso-wrapper');
+    const progresoBarra = document.getElementById('progreso-barra');
+    const progresoTexto = document.getElementById('progreso-texto');
+    progresoWrapper.style.display = 'block';
+    progresoTexto.textContent = 'Subiendo archivo…';
+
+    const formData = new FormData();
+    formData.append('archivo', archivoSeleccionado);
+    formData.append('titulo', titulo);
+    formData.append('descripcion', descripcion);
+    formData.append('categoria', categoria);
+    formData.append('tags', tagsRaw);
+    formData.append('visibilidad', visibilidad);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${API}/videos?sesion=${encodeURIComponent(obtenerSesion())}`, true);
+
+    xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            progresoBarra.style.width = pct + '%';
+            progresoTexto.textContent = pct < 100 ? `${pct}%` : 'Procesando vídeo y generando miniatura…';
+        }
+    };
+
+    xhr.onload = () => {
+        btn.disabled = false;
+        btnCancelar.disabled = false;
+        btn.textContent = 'Subir vídeo';
+
+        if (xhr.status === 201) {
+            cerrarModal('subir-overlay');
+            mostrarToast('✅ ¡Vídeo subido correctamente!');
+            cargarVideos();
+        } else {
+            let mensaje = 'Error al subir el vídeo.';
+            try { mensaje = JSON.parse(xhr.responseText).error || mensaje; } catch (e) {}
+            errEl.textContent = mensaje;
+            errEl.style.display = 'block';
+            progresoWrapper.style.display = 'none';
+            if (xhr.status === 401) {
+                borrarSesionLocal();
+                actualizarBotonPerfil();
+            }
+        }
+    };
+
+    xhr.onerror = () => {
+        btn.disabled = false;
+        btnCancelar.disabled = false;
+        btn.textContent = 'Subir vídeo';
+        errEl.textContent = 'No se pudo conectar con el servidor.';
+        errEl.style.display = 'block';
+        progresoWrapper.style.display = 'none';
+    };
+
+    xhr.send(formData);
+};
+
+async function abrirPlayer(v) {
+    videoActualId = v.id;
+    document.getElementById('vista-grid').style.display = 'none';
+    document.getElementById('vista-canal').style.display = 'none';
+    document.getElementById('vista-player').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    const videoEl = document.getElementById('player-video');
+    videoEl.src = `/videos/${encodeURIComponent(v.archivo)}`;
+    videoEl.play().catch(() => {});
+
+    document.getElementById('player-titulo').textContent = v.titulo;
+    document.getElementById('player-canal-avatar').textContent = inicialDe(v.autor);
+    document.getElementById('player-canal-nombre').textContent = v.autor || 'Anónimo';
+    document.getElementById('player-canal-stats').textContent = `Subido ${tiempoRelativo(v.fecha)}`;
+    document.getElementById('player-canal-info').onclick = () => abrirCanal(v.autor);
+    document.getElementById('player-stats').textContent = `${formatearNumero(v.vistas)} visitas · ${tiempoRelativo(v.fecha)}`;
+    document.getElementById('player-descripcion-texto').textContent = v.descripcion || 'Sin descripción.';
+    document.getElementById('like-count').textContent = formatearNumero(v.likes);
+
+    const yaLeDioLike = obtenerLikesLocales()[v.id];
+    document.getElementById('btn-like').classList.toggle('activo', !!yaLeDioLike);
+
+    const yaDislike = obtenerDislikesLocales()[v.id];
+    document.getElementById('btn-dislike').classList.toggle('activo', !!yaDislike);
+    document.getElementById('dislike-count').textContent = formatearNumero(v.dislikes || 0);
+
+    const miUsuario = obtenerUsuarioLocal();
+    const btnEliminar = document.getElementById('btn-eliminar');
+    btnEliminar.style.display = (miUsuario && miUsuario === v.autor) ? 'flex' : 'none';
+
+    renderFormularioComentario();
+
+    incrementarVistas(v.id);
+    cargarComentarios(v.id);
+}
+
+document.getElementById('btn-volver').onclick = () => {
+    volverAGrid();
+    cargarVideos();
+};
+
+function volverAGrid() {
+    const videoEl = document.getElementById('player-video');
+    videoEl.pause();
+    videoEl.src = '';
+    document.getElementById('vista-player').style.display = 'none';
+    document.getElementById('vista-canal').style.display = 'none';
+    document.getElementById('vista-grid').style.display = 'block';
+    videoActualId = null;
+}
+
+async function incrementarVistas(id) {
+    try {
+        await fetch(`${API}/videos/${id}/vista`, {
+            method: 'POST',
+            headers: cabecerasAuth()
+        });
+    } catch (e) { /* silencioso, no crítico */ }
+}
+
+const CLAVE_LIKES = 'miguelasgotube_likes';
+
+function obtenerLikesLocales() {
+    try { return JSON.parse(localStorage.getItem(CLAVE_LIKES)) || {}; }
+    catch { return {}; }
+}
+
+function guardarLikeLocal(id, valor) {
+    const likes = obtenerLikesLocales();
+    likes[id] = valor;
+    localStorage.setItem(CLAVE_LIKES, JSON.stringify(likes));
+}
+
+document.getElementById('btn-like').onclick = async () => {
+    if (!videoActualId) return;
+    const btn = document.getElementById('btn-like');
+    const likesLocales = obtenerLikesLocales();
+    const yaLike = likesLocales[videoActualId];
+    const incremento = yaLike ? -1 : 1;
+
+    btn.classList.toggle('activo', !yaLike);
+    guardarLikeLocal(videoActualId, !yaLike);
+
+    try {
+        const res = await fetch(`${API}/videos/${videoActualId}/like`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ incremento })
+        });
+        const data = await res.json();
+        document.getElementById('like-count').textContent = formatearNumero(data.likes);
+    } catch (e) {
+        mostrarToast('No se pudo guardar el like (¿servidor desconectado?).');
+        btn.classList.toggle('activo', !!yaLike);
+        guardarLikeLocal(videoActualId, !!yaLike);
+    }
+};
+
+// ── Dislike ────────────────────────────────────────────────────
+const CLAVE_DISLIKES = 'miguelasgotube_dislikes';
+function obtenerDislikesLocales() {
+    try { return JSON.parse(localStorage.getItem(CLAVE_DISLIKES)) || {}; }
+    catch { return {}; }
+}
+function guardarDislikeLocal(id, valor) {
+    const dl = obtenerDislikesLocales();
+    dl[id] = valor;
+    localStorage.setItem(CLAVE_DISLIKES, JSON.stringify(dl));
+}
+
+document.getElementById('btn-dislike').onclick = async () => {
+    if (!videoActualId) return;
+    const btn = document.getElementById('btn-dislike');
+    const dlLocales = obtenerDislikesLocales();
+    const yaDislike = dlLocales[videoActualId];
+    const incremento = yaDislike ? -1 : 1;
+    btn.classList.toggle('activo', !yaDislike);
+    guardarDislikeLocal(videoActualId, !yaDislike);
+    try {
+        const res = await fetch(`${API}/videos/${videoActualId}/dislike`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ incremento })
+        });
+        const data = await res.json();
+        document.getElementById('dislike-count').textContent = formatearNumero(data.dislikes);
+    } catch (e) {
+        mostrarToast('No se pudo guardar el dislike.');
+        btn.classList.toggle('activo', !!yaDislike);
+        guardarDislikeLocal(videoActualId, !!yaDislike);
+    }
+};
+
+// ── Share ───────────────────────────────────────────────────────
+document.getElementById('btn-share').onclick = () => {
+    const url = `${location.origin}/api/videos/${videoActualId}`;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => mostrarToast('🔗 Enlace copiado al portapapeles.')).catch(() => mostrarToast(`Copia esta URL: ${url}`));
+    } else {
+        mostrarToast(`Copia esta URL: ${url}`);
+    }
+};
+
+// ── Theater mode ────────────────────────────────────────────────
+let modoTeatro = false;
+document.getElementById('btn-theater').onclick = () => {
+    modoTeatro = !modoTeatro;
+    const player = document.getElementById('vista-player');
+    const wrapper = document.querySelector('.player-video-wrapper');
+    if (modoTeatro) {
+        player.style.maxWidth = '100%';
+        player.style.padding = '0';
+        wrapper.style.borderRadius = '0';
+        document.getElementById('btn-theater').textContent = 'Normal';
+    } else {
+        player.style.maxWidth = '';
+        player.style.padding = '';
+        wrapper.style.borderRadius = '';
+        document.getElementById('btn-theater').textContent = 'Teatro';
+    }
+};
+
+// ── Report ──────────────────────────────────────────────────────
+document.getElementById('btn-share')?.parentElement.querySelectorAll('.btn-accion').forEach(b => {});
+// Abrir modal de reporte (añadir botón en abrirPlayer)
+document.getElementById('btn-confirmar-report').onclick = async () => {
+    const motivo = document.getElementById('report-motivo').value;
+    const comentario = document.getElementById('report-comentario').value.trim();
+    const errEl = document.getElementById('report-error');
+    errEl.style.display = 'none';
+    if (!videoActualId) { errEl.textContent = 'No hay vídeo seleccionado.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('btn-confirmar-report');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API}/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({ video: videoActualId, motivo, comentario })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'No se pudo enviar el reporte.');
+        cerrarModal('report-overlay');
+        mostrarToast('Reporte enviado. Gracias.');
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+    }
+};
+
+// ── Botón Reportar en player ─────────────────────────────────────
+// Añadimos el botón de reporte dinámicamente en abrirPlayer
+const _abrirPlayerOrig = abrirPlayer;
+// (el botón de reporte ya existe en el modal; solo falta abrirlo desde algún lado)
+// Añadimos al bloque de acciones del player un botón "Reportar"
+(function() {
+    const acciones = document.querySelector('.player-acciones');
+    if (!acciones) return;
+    const btnReport = document.createElement('button');
+    btnReport.className = 'btn-accion';
+    btnReport.id = 'btn-abrir-report';
+    btnReport.textContent = '⚑ Reportar';
+    btnReport.onclick = () => {
+        document.getElementById('report-comentario').value = '';
+        document.getElementById('report-error').style.display = 'none';
+        abrirModal('report-overlay');
+    };
+    acciones.appendChild(btnReport);
+})();
+
+// ── Notificaciones ──────────────────────────────────────────────
+document.getElementById('notificaciones-btn').onclick = async (e) => {
+    e.stopPropagation();
+    if (!obtenerUsuarioLocal()) { abrirLogin(); return; }
+    await cargarNotificaciones();
+    abrirModal('noti-overlay');
+};
+
+async function cargarNotificaciones() {
+    const lista = document.getElementById('noti-list');
+    lista.innerHTML = '<div class="estado-carga"><span class="spinner"></span>Cargando…</div>';
+    try {
+        const res = await fetch(`${API}/notificaciones`, { headers: cabecerasAuth() });
+        const notis = await res.json();
+        if (!res.ok || notis.length === 0) {
+            lista.innerHTML = '<p style="color:#606060;font-size:13.5px;padding:10px 0;">No tienes notificaciones.</p>';
+            return;
+        }
+        lista.innerHTML = '';
+        notis.forEach(n => {
+            const item = document.createElement('div');
+            item.className = 'noti-item' + (n.leido ? '' : ' no-leida');
+            item.innerHTML = `<div>${escHTML(n.titulo)}</div><div class="noti-item-titulo">${escHTML(n.texto)} · ${tiempoRelativo(n.fecha)}</div>`;
+            lista.appendChild(item);
+        });
+        actualizarBadgeNotificaciones();
+    } catch (e) {
+        lista.innerHTML = '<p style="color:#d93025;font-size:13px;">No se pudieron cargar las notificaciones.</p>';
+    }
+}
+
+async function marcarNotificacionesLeidas() {
+    try {
+        await fetch(`${API}/notificaciones/leer`, { method: 'POST', headers: cabecerasAuth() });
+        actualizarBadgeNotificaciones();
+        await cargarNotificaciones();
+    } catch (e) { mostrarToast('No se pudo marcar como leídas.'); }
+}
+
+async function actualizarBadgeNotificaciones() {
+    if (!obtenerUsuarioLocal()) {
+        document.getElementById('noti-badge').style.display = 'none';
+        return;
+    }
+    try {
+        const res = await fetch(`${API}/notificaciones/pendientes`, { headers: cabecerasAuth() });
+        const data = await res.json();
+        const badge = document.getElementById('noti-badge');
+        if (data.pendientes > 0) {
+            badge.textContent = data.pendientes > 9 ? '9+' : data.pendientes;
+            badge.style.display = 'flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch (e) { /* silencioso */ }
+}
+
+// ── Suscribir ───────────────────────────────────────────────────
+async function actualizarBtnSuscribir() {
+    const btn = document.getElementById('btn-suscribir');
+    const usuario = obtenerUsuarioLocal();
+    if (!usuario || !canalActual || usuario === canalActual) {
+        btn.style.display = 'none';
+        return;
+    }
+    btn.style.display = '';
+    try {
+        const res = await fetch(`${API}/suscripcion/estado?canal=${encodeURIComponent(canalActual)}`, { headers: cabecerasAuth() });
+        const data = await res.json();
+        btn.textContent = data.suscrito ? 'Suscrito ✓' : 'Suscribirse';
+        btn.classList.toggle('btn-primary', !data.suscrito);
+    } catch (e) { /* silencioso */ }
+}
+
+document.getElementById('btn-suscribir').onclick = async () => {
+    if (!obtenerUsuarioLocal()) { abrirLogin(); return; }
+    if (!canalActual) return;
+    const btn = document.getElementById('btn-suscribir');
+    const esSuscrito = btn.textContent.includes('✓');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API}/suscripcion`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({ canal: canalActual, accion: esSuscrito ? 'unsubscribe' : 'subscribe' })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al suscribirse.');
+        btn.textContent = data.suscrito ? 'Suscrito ✓' : 'Suscribirse';
+        btn.classList.toggle('btn-primary', !data.suscrito);
+        mostrarToast(data.suscrito ? `✅ Suscrito a ${canalActual}` : `Cancelada suscripción a ${canalActual}`);
+        actualizarBadgeNotificaciones();
+    } catch (e) {
+        mostrarToast(e.message || 'Error al suscribirse.');
+    } finally {
+        btn.disabled = false;
+    }
+};
+
+document.getElementById('btn-eliminar').onclick = async () => {
+    if (!videoActualId) return;
+    if (!confirm('¿Seguro que quieres eliminar este vídeo? Esta acción no se puede deshacer.')) return;
+
+    try {
+        const res = await fetch(`${API}/videos/${videoActualId}?sesion=${encodeURIComponent(obtenerSesion())}`, { method: 'DELETE' });
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || 'No se pudo eliminar');
+        }
+        mostrarToast('🗑 Vídeo eliminado.');
+        volverAGrid();
+        cargarVideos();
+    } catch (e) {
+        mostrarToast(e.message || 'Error al eliminar el vídeo.');
+    }
+};
+
+function renderFormularioComentario() {
+    const usuario = obtenerUsuarioLocal();
+    const wrapper = document.getElementById('comentario-form-wrapper');
+
+    if (usuario) {
+        wrapper.innerHTML = `
+            <div class="comentario-form-row">
+                <div class="canal-avatar" id="comentario-mi-avatar">${escHTML(inicialDe(usuario))}</div>
+                <div class="comentario-inputs">
+                    <textarea id="comentario-texto" placeholder="Añade un comentario..." rows="2" maxlength="500"></textarea>
+                    <div id="comentario-error" class="error-msg" style="display:none;"></div>
+                    <div class="comentario-acciones-form">
+                        <button class="btn" id="btn-cancelar-comentario">Cancelar</button>
+                        <button class="btn btn-primary" id="btn-publicar-comentario">Comentar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('btn-cancelar-comentario').onclick = () => {
+            document.getElementById('comentario-texto').value = '';
+            document.getElementById('comentario-error').style.display = 'none';
+        };
+        document.getElementById('btn-publicar-comentario').onclick = publicarComentario;
+    } else {
+        wrapper.innerHTML = `
+            <div class="aviso-login-comentar">
+                <a id="link-login-comentar">Inicia sesión</a> para poder comentar.
+            </div>
+        `;
+        document.getElementById('link-login-comentar')?.addEventListener('click', abrirLogin);
+    }
+}
+
+async function publicarComentario() {
+    if (!videoActualId) return;
+    const texto = document.getElementById('comentario-texto').value.trim();
+    const errEl = document.getElementById('comentario-error');
+    errEl.style.display = 'none';
+
+    if (!texto) {
+        errEl.textContent = 'Escribe un comentario.';
+        errEl.style.display = 'block';
+        return;
+    }
+
+    const btn = document.getElementById('btn-publicar-comentario');
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(`${API}/videos/${videoActualId}/comentarios`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({ texto })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'No se pudo publicar el comentario.');
+
+        document.getElementById('comentario-texto').value = '';
+        cargarComentarios(videoActualId);
+        mostrarToast('Comentario publicado.');
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+        if (e.message.includes('iniciar sesión')) {
+            borrarSesionLocal();
+            actualizarBotonPerfil();
+            renderFormularioComentario();
+        }
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function cargarComentarios(videoId) {
+    const lista = document.getElementById('lista-comentarios');
+    lista.innerHTML = '<p class="comentarios-vacio">Cargando comentarios…</p>';
+    try {
+        const res = await fetch(`${API}/videos/${videoId}/comentarios`);
+        const comentarios = await res.json();
+
+        document.getElementById('comentarios-titulo').textContent =
+            comentarios.length > 0 ? `${comentarios.length} comentario${comentarios.length !== 1 ? 's' : ''}` : 'Comentarios';
+
+        if (comentarios.length === 0) {
+            lista.innerHTML = '<p class="comentarios-vacio">Aún no hay comentarios. ¡Sé el primero!</p>';
+            return;
+        }
+
+        lista.innerHTML = '';
+        const miUsuario = obtenerUsuarioLocal();
+        comentarios.slice().reverse().forEach(c => {
+            const item = document.createElement('div');
+            item.className = 'comentario-item';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'canal-avatar';
+            avatar.style.cursor = 'pointer';
+            avatar.textContent = inicialDe(c.apodo);
+            avatar.onclick = () => abrirCanal(c.apodo);
+
+            const cuerpo = document.createElement('div');
+            cuerpo.className = 'comentario-cuerpo';
+            cuerpo.innerHTML = `
+                <div class="comentario-cabecera">
+                    <span class="comentario-autor">${escHTML(c.apodo)}</span>
+                    <span class="comentario-fecha">${tiempoRelativo(c.fecha)}</span>
+                </div>
+                <div class="comentario-texto">${escHTML(c.texto)}</div>
+            `;
+            cuerpo.querySelector('.comentario-autor').onclick = () => abrirCanal(c.apodo);
+
+            if (miUsuario && miUsuario === c.apodo) {
+                const btnBorrar = document.createElement('button');
+                btnBorrar.className = 'comentario-borrar';
+                btnBorrar.textContent = 'Eliminar';
+                btnBorrar.onclick = () => eliminarComentario(videoId, c.id);
+                cuerpo.appendChild(btnBorrar);
+            }
+
+            item.appendChild(avatar);
+            item.appendChild(cuerpo);
+            lista.appendChild(item);
+        });
+    } catch (e) {
+        lista.innerHTML = '<p class="comentarios-vacio">No se pudieron cargar los comentarios.</p>';
+    }
+}
+
+async function eliminarComentario(videoId, comentarioId) {
+    if (!confirm('¿Eliminar este comentario?')) return;
+    try {
+        const res = await fetch(`${API}/videos/${videoId}/comentarios/${comentarioId}?sesion=${encodeURIComponent(obtenerSesion())}`, { method: 'DELETE' });
+        if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            throw new Error(data.error || 'No se pudo eliminar.');
+        }
+        mostrarToast('Comentario eliminado.');
+        cargarComentarios(videoId);
+    } catch (e) {
+        mostrarToast(e.message || 'Error al eliminar el comentario.');
+    }
+}
+
+async function abrirCanal(nombreAutor) {
+    if (!nombreAutor) return;
+    canalActual = nombreAutor;
+    document.getElementById('vista-grid').style.display = 'none';
+    document.getElementById('vista-player').style.display = 'none';
+    document.getElementById('vista-canal').style.display = 'block';
+    window.scrollTo(0, 0);
+    actualizarBtnSuscribir();
+
+    const grid = document.getElementById('canal-grid-videos');
+    grid.innerHTML = '<div class="estado-carga"><span class="spinner"></span>Cargando canal…</div>';
+
+    document.getElementById('canal-avatar-grande').textContent = inicialDe(nombreAutor);
+    document.getElementById('canal-nombre-grande').textContent = nombreAutor;
+    document.getElementById('canal-stats-grande').textContent = '';
+
+    try {
+        const res = await fetch(`${API}/canal/${encodeURIComponent(nombreAutor)}`);
+        const datos = await res.json();
+
+        document.getElementById('canal-stats-grande').textContent =
+            `${datos.num_videos} vídeo${datos.num_videos !== 1 ? 's' : ''} · ` +
+            `${formatearNumero(datos.total_vistas)} visitas totales · ` +
+            `${formatearNumero(datos.total_likes)} likes totales`;
+
+        if (datos.videos.length === 0) {
+            grid.innerHTML = '<div class="vacio-estado">Este canal todavía no tiene vídeos.</div>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        datos.videos.forEach(v => grid.appendChild(crearTarjetaVideo(v)));
+    } catch (e) {
+        grid.innerHTML = '<div class="vacio-estado">No se pudo cargar el canal.</div>';
+    }
+}
+
+document.getElementById('btn-volver-canal').onclick = () => {
+    document.getElementById('vista-canal').style.display = 'none';
+    document.getElementById('vista-grid').style.display = 'block';
+    cargarVideos();
+};
+
+async function comprobarSesionInicial() {
+    const token = obtenerSesion();
+    if (!token) return;
+    try {
+        const res = await fetch(`${API}/auth/yo`, { headers: cabecerasAuth() });
+        if (!res.ok) {
+            borrarSesionLocal();
+        }
+    } catch (e) { /* sin conexión, no forzamos cierre de sesión */ }
+    actualizarBotonPerfil();
+}
+
+/* === Miniplayer DESACTIVADO (no-op) ===
+   Sustituimos las funciones del miniplayer por versiones seguras:
+   - mostrarMiniplayer: no hace nada (no muestra el miniplayer)
+   - ocultarMiniplayer: oculta y libera recursos si el miniplayer existiera
+   - restaurarMiniplayer: no hace nada
+   Además neutralizamos botones mini-open / mini-close para evitar acciones.
+*/
+function mostrarMiniplayer(videoSrc, tiempo = 0) {
+  // Miniplayer desactivado: no hacemos nada.
+  // Esto evita que aparezca automáticamente al hacer scroll.
+  return;
+}
+
+function ocultarMiniplayer() {
+  // Aseguramos que si hay un elemento #miniplayer queda oculto y sin fuente.
+  try {
+    const mp = document.getElementById('miniplayer');
+    const mini = document.getElementById('mini-video');
+    if (mini) {
+      try { mini.pause(); } catch(e){}
+      try { mini.removeAttribute('src'); mini.load(); } catch(e){}
+    }
+    if (mp) mp.style.display = 'none';
+  } catch (e) { /* silencioso */ }
+  return;
+}
+
+function restaurarMiniplayer() {
+  // No restauramos miniplayer al cargar: queda desactivado.
+  return;
+}
+
+try {
+  const bOpen = document.getElementById('mini-open');
+  if (bOpen) bOpen.onclick = () => { /* deshabilitado */ };
+  const bClose = document.getElementById('mini-close');
+  if (bClose) bClose.onclick = () => { ocultarMiniplayer(); };
+} catch (e) { /* silencioso */ }
+/* === fin miniplayer DESACTIVADO === */
+
+window.addEventListener('load', () => {
+    inicializarTema();
+    actualizarBotonPerfil();
+    comprobarSesionInicial().then(() => actualizarBadgeNotificaciones());
+    renderCategorias();
+    cargarVideos();
+    setInterval(comprobarServidor, 15000);
+    setInterval(actualizarBadgeNotificaciones, 60000);
+});
+</script>
+</body>
+</html>

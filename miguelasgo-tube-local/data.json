@@ -1,0 +1,43 @@
+{
+  "videos": [
+    {
+      "id": "2612390ae377",
+      "titulo": "Techoooo",
+      "descripcion": "Un techo sin más...",
+      "categoria": "Humor",
+      "autor": "Miguelasgo_Corp",
+      "archivo": "2612390ae377.mkv",
+      "miniatura": "2612390ae377.jpg",
+      "tamano_mb": 1.08,
+      "fecha": 1782207008.5907423,
+      "vistas": 2,
+      "likes": 0,
+      "dislikes": 0,
+      "tags": [
+        "Techos"
+      ],
+      "visibilidad": "publico"
+    }
+  ],
+  "comentarios": {
+    "2612390ae377": [
+      {
+        "id": "b2920d68d6b1",
+        "apodo": "Miguelasgo_Corp",
+        "texto": "Me mola el techo",
+        "fecha": 1782207034.4500122,
+        "padre": null
+      }
+    ]
+  },
+  "reportes": [
+    {
+      "id": "de798f57de4f",
+      "video": "2612390ae377",
+      "motivo": "otro",
+      "comentario": "El techo es ofensivo",
+      "reporter": "Paquito",
+      "fecha": 1782207122.2371376
+    }
+  ]
+}
