@@ -1031,6 +1031,7 @@ body.dark-mode .menu-perfil-item:hover { background: #272727; }
 
     <div class="header-actions" style="position:relative;">
         <span class="estado-servidor online" id="estado-servidor"><span class="punto-estado"></span>Conectando…</span>
+        <button class="icon-btn" id="btn-stats" title="Estadísticas globales">📊</button>
         <button class="icon-btn" id="notificaciones-btn" title="Notificaciones" style="position:relative;">
             🔔
             <span class="icon-badge" id="noti-badge" style="display:none">0</span>
@@ -1066,6 +1067,12 @@ body.dark-mode .menu-perfil-item:hover { background: #272727; }
         Volver
     </button>
 
+    <div class="banner-continuar" id="banner-continuar">
+        ⏱ Viste parte de este vídeo
+        <button class="banner-continuar-btn" id="btn-continuar-desde">Continuar desde <span id="continuar-tiempo">0:00</span></button>
+        <button class="banner-continuar-cerrar" id="btn-cerrar-banner-continuar">✕</button>
+    </div>
+
     <div class="player-video-wrapper"><video id="player-video" controls></video></div>
 
     <div class="player-titulo" id="player-titulo"></div>
@@ -1089,6 +1096,8 @@ body.dark-mode .menu-perfil-item:hover { background: #272727; }
             </button>
             <button class="btn-accion" id="btn-share">Compartir</button>
             <button class="btn-accion" id="btn-theater" title="Modo teatro">Teatro</button>
+            <button class="btn-accion" id="btn-atajos" title="Atajos de teclado">⌨</button>
+            <button class="btn-editar" id="btn-editar" style="display:none;">✏️ Editar</button>
             <button class="btn-eliminar" id="btn-eliminar" style="display:none;">🗑 Eliminar</button>
         </div>
     </div>
@@ -1114,12 +1123,23 @@ body.dark-mode .menu-perfil-item:hover { background: #272727; }
 
     <div class="canal-cabecera">
         <div class="canal-avatar-grande" id="canal-avatar-grande">?</div>
-        <div>
+        <div style="flex:1">
             <div style="display:flex; align-items:center; gap:12px;">
               <div class="canal-nombre-grande" id="canal-nombre-grande"></div>
-              <button class="btn-primary" id="btn-suscribir">Suscribirse</button>
+              <button class="btn-primary btn" id="btn-suscribir">Suscribirse</button>
             </div>
             <div class="canal-stats-grande" id="canal-stats-grande"></div>
+            <div style="display:flex; align-items:center; gap:4px; margin-top:6px;">
+                <div class="canal-bio" id="canal-bio"></div>
+                <button class="canal-bio-editar" id="btn-editar-bio" style="display:none;" title="Editar descripción">✏️</button>
+            </div>
+            <div class="canal-bio-form" id="canal-bio-form">
+                <textarea id="bio-textarea" maxlength="300" rows="3" placeholder="Escribe algo sobre tu canal..."></textarea>
+                <div class="canal-bio-acciones">
+                    <button class="btn" id="btn-cancelar-bio">Cancelar</button>
+                    <button class="btn btn-primary" id="btn-guardar-bio">Guardar</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1257,13 +1277,75 @@ body.dark-mode .menu-perfil-item:hover { background: #272727; }
     </div>
 </div>
 
+<div class="modal-overlay" id="editar-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('editar-overlay')">✕</button>
+        <h3>✏️ Editar vídeo</h3>
+        <label>Título *</label>
+        <input type="text" id="editar-titulo" maxlength="100">
+        <label>Descripción</label>
+        <textarea id="editar-descripcion" rows="3" maxlength="500"></textarea>
+        <label>Tags (separados por comas)</label>
+        <input type="text" id="editar-tags" maxlength="200">
+        <label>Visibilidad</label>
+        <select id="editar-visibilidad">
+            <option value="publico">Público</option>
+            <option value="privado">Privado (solo tú y tus suscriptores)</option>
+        </select>
+        <label>Categoría</label>
+        <select id="editar-categoria">
+            <option value="Otros">Otros</option>
+            <option value="Gaming">Gaming</option>
+            <option value="Tecnología">Tecnología</option>
+            <option value="Música">Música</option>
+            <option value="Educación">Educación</option>
+            <option value="Vlog">Vlog</option>
+            <option value="Tutorial">Tutorial</option>
+            <option value="Humor">Humor</option>
+        </select>
+        <div id="editar-error" class="error-msg" style="display:none;"></div>
+        <div class="modal-actions">
+            <button class="btn" onclick="cerrarModal('editar-overlay')">Cancelar</button>
+            <button class="btn btn-primary" id="btn-confirmar-editar">Guardar cambios</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="stats-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('stats-overlay')">✕</button>
+        <h3>📊 Estadísticas globales</h3>
+        <div id="stats-contenido">
+            <div class="estado-carga"><span class="spinner"></span>Cargando…</div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="atajos-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="cerrarModal('atajos-overlay')">✕</button>
+        <h3>⌨ Atajos de teclado</h3>
+        <div class="subtitulo">Disponibles mientras ves un vídeo.</div>
+        <div class="atajos-lista">
+            <kbd>Espacio</kbd><span>Pausar / reproducir</span>
+            <kbd>←</kbd><span>Retroceder 10 segundos</span>
+            <kbd>→</kbd><span>Avanzar 10 segundos</span>
+            <kbd>F</kbd><span>Pantalla completa</span>
+            <kbd>M</kbd><span>Silenciar / activar sonido</span>
+            <kbd>↑</kbd><span>Subir volumen 10%</span>
+            <kbd>↓</kbd><span>Bajar volumen 10%</span>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
-<div class="miniplayer" id="miniplayer" style="display:none;">
-    <video id="mini-video" controls muted></video>
+<div class="miniplayer" id="miniplayer">
+    <video id="mini-video" controls></video>
     <div class="mini-controls">
-        <button class="btn" id="mini-open">Abrir</button>
-        <button class="btn" id="mini-close">Cerrar</button>
+        <span class="mini-titulo" id="mini-titulo"></span>
+        <button class="mini-btn mini-btn-primary" id="mini-open">▶ Abrir</button>
+        <button class="mini-btn" id="mini-close">✕</button>
     </div>
 </div>
 
@@ -1273,8 +1355,12 @@ const API = '/api';
 let categoriaActiva = null;
 let terminoBusqueda = '';
 let videoActualId = null;
+let videoActualData = null;
 let archivoSeleccionado = null;
 let canalActual = null;
+let modoTendencias = false;
+let posicionGuardadaActual = 0;
+let intervaloGuardarPosicion = null;
 
 const CLAVE_SESION = 'miguelasgotube_sesion';
 const CLAVE_USUARIO = 'miguelasgotube_usuario';
@@ -1544,16 +1630,23 @@ async function comprobarServidor() {
 function renderCategorias() {
     const cont = document.getElementById('barra-categorias');
     cont.innerHTML = '';
+
+    const btnTend = document.createElement('button');
+    btnTend.className = 'cat-chip' + (modoTendencias ? ' activa' : '');
+    btnTend.textContent = '🔥 Tendencias';
+    btnTend.onclick = () => {
+        modoTendencias = !modoTendencias;
+        if (modoTendencias) { categoriaActiva = null; terminoBusqueda = ''; document.getElementById('buscar-input').value = ''; }
+        renderCategorias(); cargarVideos();
+    };
+    cont.appendChild(btnTend);
+
     CATEGORIAS.forEach(cat => {
         const btn = document.createElement('button');
         const valor = cat === 'Todos' ? null : cat;
-        btn.className = 'cat-chip' + (categoriaActiva === valor ? ' activa' : '');
+        btn.className = 'cat-chip' + (!modoTendencias && categoriaActiva === valor ? ' activa' : '');
         btn.textContent = cat;
-        btn.onclick = () => {
-            categoriaActiva = valor;
-            renderCategorias();
-            cargarVideos();
-        };
+        btn.onclick = () => { modoTendencias = false; categoriaActiva = valor; renderCategorias(); cargarVideos(); };
         cont.appendChild(btn);
     });
 }
@@ -1562,12 +1655,17 @@ async function cargarVideos() {
     const grid = document.getElementById('grid-videos');
     grid.innerHTML = '<div class="estado-carga"><span class="spinner"></span>Cargando vídeos…</div>';
 
-    const params = new URLSearchParams();
-    if (terminoBusqueda) params.set('q', terminoBusqueda);
-    if (categoriaActiva) params.set('categoria', categoriaActiva);
+    const url = modoTendencias
+        ? `${API}/tendencias`
+        : `${API}/videos?${new URLSearchParams(
+            Object.fromEntries([
+                terminoBusqueda && ['q', terminoBusqueda],
+                categoriaActiva  && ['categoria', categoriaActiva],
+            ].filter(Boolean))
+          )}`;
 
     try {
-        const res = await fetch(`${API}/videos?${params.toString()}`);
+        const res = await fetch(url);
         if (!res.ok) throw new Error('Respuesta no válida del servidor');
         const videos = await res.json();
 
@@ -1576,7 +1674,9 @@ async function cargarVideos() {
         document.getElementById('banner-offline').classList.remove('visible');
 
         if (videos.length === 0) {
-            grid.innerHTML = `<div class="vacio-estado">📹 No se encontraron vídeos.<br>¡Sé el primero en subir uno!</div>`;
+            grid.innerHTML = modoTendencias
+                ? `<div class="vacio-estado">🔥 No hay tendencias esta semana todavía.</div>`
+                : `<div class="vacio-estado">📹 No se encontraron vídeos.<br>¡Sé el primero en subir uno!</div>`;
             return;
         }
 
@@ -1811,15 +1911,22 @@ document.getElementById('btn-confirmar-subida').onclick = () => {
 
 async function abrirPlayer(v) {
     videoActualId = v.id;
+    videoActualData = v;
     document.getElementById('vista-grid').style.display = 'none';
     document.getElementById('vista-canal').style.display = 'none';
     document.getElementById('vista-player').style.display = 'block';
     window.scrollTo(0, 0);
 
+    // Ocultar el miniplayer si estaba visible
+    const mp = document.getElementById('miniplayer');
+    mp.style.display = 'none';
+    const mini = document.getElementById('mini-video');
+    try { mini.pause(); mini.removeAttribute('src'); mini.load(); } catch(e) {}
+
     const videoEl = document.getElementById('player-video');
     videoEl.src = `/videos/${encodeURIComponent(v.archivo)}`;
-    videoEl.play().catch(() => {});
 
+    document.getElementById('banner-continuar').classList.remove('visible');
     document.getElementById('player-titulo').textContent = v.titulo;
     document.getElementById('player-canal-avatar').textContent = inicialDe(v.autor);
     document.getElementById('player-canal-nombre').textContent = v.autor || 'Anónimo';
@@ -1829,36 +1936,58 @@ async function abrirPlayer(v) {
     document.getElementById('player-descripcion-texto').textContent = v.descripcion || 'Sin descripción.';
     document.getElementById('like-count').textContent = formatearNumero(v.likes);
 
+    // Tags en descripción
+    const tagsEl = document.getElementById('player-tags');
+    if (v.tags && v.tags.length) {
+        tagsEl.innerHTML = v.tags.map(t => `<span class="tag-chip" style="cursor:pointer">${escHTML(t)}</span>`).join(' ');
+        tagsEl.querySelectorAll('.tag-chip').forEach(el => {
+            el.onclick = () => { terminoBusqueda = el.textContent; modoTendencias = false; document.getElementById('buscar-input').value = el.textContent; volverAGrid(); cargarVideos(); };
+        });
+    } else { tagsEl.innerHTML = ''; }
+
     const yaLeDioLike = obtenerLikesLocales()[v.id];
     document.getElementById('btn-like').classList.toggle('activo', !!yaLeDioLike);
-
     const yaDislike = obtenerDislikesLocales()[v.id];
     document.getElementById('btn-dislike').classList.toggle('activo', !!yaDislike);
     document.getElementById('dislike-count').textContent = formatearNumero(v.dislikes || 0);
 
     const miUsuario = obtenerUsuarioLocal();
-    const btnEliminar = document.getElementById('btn-eliminar');
-    btnEliminar.style.display = (miUsuario && miUsuario === v.autor) ? 'flex' : 'none';
+    const esAutor = miUsuario && miUsuario === v.autor;
+    document.getElementById('btn-eliminar').style.display = esAutor ? 'flex' : 'none';
+    document.getElementById('btn-editar').style.display   = esAutor ? 'flex' : 'none';
 
     renderFormularioComentario();
-
     incrementarVistas(v.id);
     cargarComentarios(v.id);
+
+    // Comprobar posición guardada
+    comprobarPosicionGuardada(v.id);
+
+    // Guardar posición cada 30s
+    clearInterval(intervaloGuardarPosicion);
+    intervaloGuardarPosicion = setInterval(() => guardarPosicionActual(), 30000);
 }
 
 document.getElementById('btn-volver').onclick = () => {
-    volverAGrid();
+    guardarPosicionActual();
+    mostrarMiniplayer();
+    document.getElementById('vista-player').style.display = 'none';
+    document.getElementById('vista-canal').style.display = 'none';
+    document.getElementById('vista-grid').style.display = 'block';
     cargarVideos();
 };
 
 function volverAGrid() {
+    clearInterval(intervaloGuardarPosicion);
     const videoEl = document.getElementById('player-video');
     videoEl.pause();
     videoEl.src = '';
+    document.getElementById('miniplayer').style.display = 'none';
     document.getElementById('vista-player').style.display = 'none';
     document.getElementById('vista-canal').style.display = 'none';
     document.getElementById('vista-grid').style.display = 'block';
     videoActualId = null;
+    videoActualData = null;
 }
 
 async function incrementarVistas(id) {
@@ -2218,52 +2347,112 @@ async function cargarComentarios(videoId) {
         const res = await fetch(`${API}/videos/${videoId}/comentarios`);
         const comentarios = await res.json();
 
+        const raiz   = comentarios.filter(c => !c.padre);
+        const hijos  = comentarios.filter(c =>  c.padre);
+
         document.getElementById('comentarios-titulo').textContent =
             comentarios.length > 0 ? `${comentarios.length} comentario${comentarios.length !== 1 ? 's' : ''}` : 'Comentarios';
 
-        if (comentarios.length === 0) {
+        if (raiz.length === 0) {
             lista.innerHTML = '<p class="comentarios-vacio">Aún no hay comentarios. ¡Sé el primero!</p>';
             return;
         }
 
         lista.innerHTML = '';
         const miUsuario = obtenerUsuarioLocal();
-        comentarios.slice().reverse().forEach(c => {
-            const item = document.createElement('div');
-            item.className = 'comentario-item';
 
-            const avatar = document.createElement('div');
-            avatar.className = 'canal-avatar';
-            avatar.style.cursor = 'pointer';
-            avatar.textContent = inicialDe(c.apodo);
-            avatar.onclick = () => abrirCanal(c.apodo);
+        raiz.slice().reverse().forEach(c => {
+            lista.appendChild(crearItemComentario(c, videoId, miUsuario, false));
 
-            const cuerpo = document.createElement('div');
-            cuerpo.className = 'comentario-cuerpo';
-            cuerpo.innerHTML = `
-                <div class="comentario-cabecera">
-                    <span class="comentario-autor">${escHTML(c.apodo)}</span>
-                    <span class="comentario-fecha">${tiempoRelativo(c.fecha)}</span>
-                </div>
-                <div class="comentario-texto">${escHTML(c.texto)}</div>
-            `;
-            cuerpo.querySelector('.comentario-autor').onclick = () => abrirCanal(c.apodo);
+            // Respuestas del comentario raíz
+            const respDiv = document.createElement('div');
+            respDiv.className = 'comentario-respuestas';
+            hijos.filter(r => r.padre === c.id).forEach(r => {
+                respDiv.appendChild(crearItemComentario(r, videoId, miUsuario, true));
+            });
+            if (respDiv.childElementCount > 0) lista.appendChild(respDiv);
 
-            if (miUsuario && miUsuario === c.apodo) {
-                const btnBorrar = document.createElement('button');
-                btnBorrar.className = 'comentario-borrar';
-                btnBorrar.textContent = 'Eliminar';
-                btnBorrar.onclick = () => eliminarComentario(videoId, c.id);
-                cuerpo.appendChild(btnBorrar);
+            // Formulario de respuesta (inline, oculto)
+            if (miUsuario) {
+                const replyForm = document.createElement('div');
+                replyForm.className = 'reply-form-inline';
+                replyForm.id = `reply-form-${c.id}`;
+                replyForm.innerHTML = `
+                    <textarea placeholder="Escribe una respuesta..." rows="2" maxlength="500"></textarea>
+                    <div class="reply-form-acciones">
+                        <button class="btn" onclick="document.getElementById('reply-form-${c.id}').classList.remove('visible')">Cancelar</button>
+                        <button class="btn btn-primary">Responder</button>
+                    </div>`;
+                replyForm.querySelector('.btn-primary').onclick = async () => {
+                    const texto = replyForm.querySelector('textarea').value.trim();
+                    if (!texto) return;
+                    replyForm.querySelector('.btn-primary').disabled = true;
+                    try {
+                        const r2 = await fetch(`${API}/videos/${videoId}/comentarios`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+                            body: JSON.stringify({ texto, padre: c.id })
+                        });
+                        const d2 = await r2.json();
+                        if (!r2.ok) throw new Error(d2.error || 'Error al responder.');
+                        replyForm.classList.remove('visible');
+                        cargarComentarios(videoId);
+                    } catch (e2) { mostrarToast(e2.message || 'Error al responder.'); }
+                    finally { replyForm.querySelector('.btn-primary').disabled = false; }
+                };
+                lista.appendChild(replyForm);
             }
-
-            item.appendChild(avatar);
-            item.appendChild(cuerpo);
-            lista.appendChild(item);
         });
     } catch (e) {
         lista.innerHTML = '<p class="comentarios-vacio">No se pudieron cargar los comentarios.</p>';
     }
+}
+
+function crearItemComentario(c, videoId, miUsuario, esRespuesta) {
+    const item = document.createElement('div');
+    item.className = esRespuesta ? 'respuesta-item' : 'comentario-item';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'canal-avatar';
+    if (esRespuesta) { avatar.style.width='28px'; avatar.style.height='28px'; avatar.style.fontSize='12px'; }
+    avatar.style.cursor = 'pointer';
+    avatar.textContent = inicialDe(c.apodo);
+    avatar.onclick = () => abrirCanal(c.apodo);
+
+    const cuerpo = document.createElement('div');
+    cuerpo.className = 'comentario-cuerpo';
+    cuerpo.innerHTML = `
+        <div class="comentario-cabecera">
+            <span class="comentario-autor">${escHTML(c.apodo)}</span>
+            <span class="comentario-fecha">${tiempoRelativo(c.fecha)}</span>
+        </div>
+        <div class="comentario-texto">${escHTML(c.texto)}</div>
+    `;
+    cuerpo.querySelector('.comentario-autor').onclick = () => abrirCanal(c.apodo);
+
+    // Botón responder (solo en comentarios raíz y si logueado)
+    if (!esRespuesta && miUsuario) {
+        const btnResp = document.createElement('button');
+        btnResp.className = 'btn-responder';
+        btnResp.textContent = 'Responder';
+        btnResp.onclick = () => {
+            const form = document.getElementById(`reply-form-${c.id}`);
+            if (form) { form.classList.toggle('visible'); if (form.classList.contains('visible')) form.querySelector('textarea').focus(); }
+        };
+        cuerpo.appendChild(btnResp);
+    }
+
+    if (miUsuario && miUsuario === c.apodo) {
+        const btnBorrar = document.createElement('button');
+        btnBorrar.className = 'comentario-borrar';
+        btnBorrar.textContent = 'Eliminar';
+        btnBorrar.onclick = () => eliminarComentario(videoId, c.id);
+        cuerpo.appendChild(btnBorrar);
+    }
+
+    item.appendChild(avatar);
+    item.appendChild(cuerpo);
+    return item;
 }
 
 async function eliminarComentario(videoId, comentarioId) {
@@ -2303,8 +2492,16 @@ async function abrirCanal(nombreAutor) {
 
         document.getElementById('canal-stats-grande').textContent =
             `${datos.num_videos} vídeo${datos.num_videos !== 1 ? 's' : ''} · ` +
-            `${formatearNumero(datos.total_vistas)} visitas totales · ` +
-            `${formatearNumero(datos.total_likes)} likes totales`;
+            `${formatearNumero(datos.total_vistas)} visitas · ` +
+            `${formatearNumero(datos.suscriptores || 0)} suscriptores`;
+
+        const bioEl = document.getElementById('canal-bio');
+        bioEl.textContent = datos.bio || '';
+
+        const miUsuario = obtenerUsuarioLocal();
+        const btnEditBio = document.getElementById('btn-editar-bio');
+        btnEditBio.style.display = (miUsuario === nombreAutor) ? 'inline-block' : 'none';
+        document.getElementById('canal-bio-form').classList.remove('visible');
 
         if (datos.videos.length === 0) {
             grid.innerHTML = '<div class="vacio-estado">Este canal todavía no tiene vídeos.</div>';
@@ -2336,45 +2533,238 @@ async function comprobarSesionInicial() {
     actualizarBotonPerfil();
 }
 
-/* === Miniplayer DESACTIVADO (no-op) ===
-   Sustituimos las funciones del miniplayer por versiones seguras:
-   - mostrarMiniplayer: no hace nada (no muestra el miniplayer)
-   - ocultarMiniplayer: oculta y libera recursos si el miniplayer existiera
-   - restaurarMiniplayer: no hace nada
-   Además neutralizamos botones mini-open / mini-close para evitar acciones.
-*/
-function mostrarMiniplayer(videoSrc, tiempo = 0) {
-  // Miniplayer desactivado: no hacemos nada.
-  // Esto evita que aparezca automáticamente al hacer scroll.
-  return;
+// ── Posición guardada ──────────────────────────────────────────
+function formatearTiempo(seg) {
+    seg = Math.floor(seg || 0);
+    const m = Math.floor(seg / 60), s = seg % 60;
+    return `${m}:${s.toString().padStart(2,'0')}`;
 }
 
-function ocultarMiniplayer() {
-  // Aseguramos que si hay un elemento #miniplayer queda oculto y sin fuente.
-  try {
-    const mp = document.getElementById('miniplayer');
+async function guardarPosicionActual() {
+    if (!videoActualId) return;
+    const videoEl = document.getElementById('player-video');
+    const pos = videoEl.currentTime || 0;
+    if (pos < 5) return;
+    try {
+        await fetch(`${API}/historial/posicion`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({ video: videoActualId, posicion: Math.floor(pos), sesion: obtenerSesion() })
+        });
+    } catch (e) { /* silencioso */ }
+}
+
+async function comprobarPosicionGuardada(videoId) {
+    if (!obtenerUsuarioLocal()) return;
+    try {
+        const res = await fetch(`${API}/historial/posicion/${videoId}`, { headers: cabecerasAuth() });
+        const data = await res.json();
+        if (data.posicion > 10) {
+            posicionGuardadaActual = data.posicion;
+            document.getElementById('continuar-tiempo').textContent = formatearTiempo(data.posicion);
+            document.getElementById('banner-continuar').classList.add('visible');
+        }
+    } catch (e) { /* silencioso */ }
+}
+
+document.getElementById('btn-continuar-desde').onclick = () => {
+    const videoEl = document.getElementById('player-video');
+    videoEl.currentTime = posicionGuardadaActual;
+    videoEl.play().catch(() => {});
+    document.getElementById('banner-continuar').classList.remove('visible');
+};
+document.getElementById('btn-cerrar-banner-continuar').onclick = () => {
+    document.getElementById('banner-continuar').classList.remove('visible');
+};
+
+window.addEventListener('beforeunload', () => { guardarPosicionActual(); });
+
+// ── Miniplayer real ────────────────────────────────────────────
+function mostrarMiniplayer() {
+    if (!videoActualData) return;
+    const videoEl = document.getElementById('player-video');
+    const tiempo = videoEl.currentTime || 0;
+    const paused = videoEl.paused;
+    if (paused && tiempo < 2) return; // no mostrar si apenas se abrió sin reproducir
+
+    videoEl.pause();
+    const mp  = document.getElementById('miniplayer');
     const mini = document.getElementById('mini-video');
-    if (mini) {
-      try { mini.pause(); } catch(e){}
-      try { mini.removeAttribute('src'); mini.load(); } catch(e){}
+    document.getElementById('mini-titulo').textContent = videoActualData.titulo || '';
+    mini.src = videoEl.src;
+    mini.currentTime = tiempo;
+    mp.style.display = 'flex';
+    if (!paused) mini.play().catch(() => {});
+}
+
+document.getElementById('mini-open').onclick = () => {
+    if (!videoActualData) return;
+    const mini = document.getElementById('mini-video');
+    const tiempo = mini.currentTime || 0;
+    mini.pause();
+    document.getElementById('miniplayer').style.display = 'none';
+    abrirPlayer(videoActualData).then(() => {
+        const videoEl = document.getElementById('player-video');
+        videoEl.currentTime = tiempo;
+        videoEl.play().catch(() => {});
+        document.getElementById('banner-continuar').classList.remove('visible');
+    });
+};
+
+document.getElementById('mini-close').onclick = () => {
+    clearInterval(intervaloGuardarPosicion);
+    const mini = document.getElementById('mini-video');
+    guardarPosicionActual();
+    mini.pause();
+    mini.removeAttribute('src');
+    mini.load();
+    document.getElementById('miniplayer').style.display = 'none';
+    videoActualId = null;
+    videoActualData = null;
+};
+
+// ── Editar vídeo ───────────────────────────────────────────────
+document.getElementById('btn-editar').onclick = () => {
+    if (!videoActualData) return;
+    document.getElementById('editar-titulo').value      = videoActualData.titulo || '';
+    document.getElementById('editar-descripcion').value = videoActualData.descripcion || '';
+    document.getElementById('editar-tags').value        = (videoActualData.tags || []).join(', ');
+    document.getElementById('editar-categoria').value   = videoActualData.categoria || 'Otros';
+    document.getElementById('editar-visibilidad').value = videoActualData.visibilidad || 'publico';
+    document.getElementById('editar-error').style.display = 'none';
+    abrirModal('editar-overlay');
+};
+
+document.getElementById('btn-confirmar-editar').onclick = async () => {
+    const titulo = document.getElementById('editar-titulo').value.trim();
+    const errEl  = document.getElementById('editar-error');
+    errEl.style.display = 'none';
+    if (!titulo) { errEl.textContent = 'El título es obligatorio.'; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('btn-confirmar-editar');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API}/videos/${videoActualId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({
+                titulo,
+                descripcion: document.getElementById('editar-descripcion').value.trim(),
+                tags:        document.getElementById('editar-tags').value.trim(),
+                categoria:   document.getElementById('editar-categoria').value,
+                visibilidad: document.getElementById('editar-visibilidad').value,
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'No se pudo guardar.');
+        videoActualData = data;
+        document.getElementById('player-titulo').textContent = data.titulo;
+        document.getElementById('player-descripcion-texto').textContent = data.descripcion || 'Sin descripción.';
+        cerrarModal('editar-overlay');
+        mostrarToast('✅ Vídeo actualizado.');
+    } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = 'block';
+    } finally { btn.disabled = false; }
+};
+
+// ── Stats globales ─────────────────────────────────────────────
+document.getElementById('btn-stats').onclick = async () => {
+    abrirModal('stats-overlay');
+    const cont = document.getElementById('stats-contenido');
+    cont.innerHTML = '<div class="estado-carga"><span class="spinner"></span>Cargando…</div>';
+    try {
+        const res = await fetch(`${API}/stats`);
+        const d   = await res.json();
+        cont.innerHTML = `
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-card-valor">${formatearNumero(d.videos)}</div><div class="stat-card-label">Vídeos</div></div>
+                <div class="stat-card"><div class="stat-card-valor">${formatearNumero(d.usuarios)}</div><div class="stat-card-label">Usuarios</div></div>
+                <div class="stat-card"><div class="stat-card-valor">${d.almacenamiento_mb} MB</div><div class="stat-card-label">Almacenamiento</div></div>
+                <div class="stat-card"><div class="stat-card-valor">${d.reportes_pendientes}</div><div class="stat-card-label">Reportes pendientes</div></div>
+            </div>`;
+    } catch (e) {
+        cont.innerHTML = '<p style="color:#d93025;font-size:13px;margin-top:10px;">No se pudieron cargar las estadísticas.</p>';
     }
-    if (mp) mp.style.display = 'none';
-  } catch (e) { /* silencioso */ }
-  return;
-}
+};
 
-function restaurarMiniplayer() {
-  // No restauramos miniplayer al cargar: queda desactivado.
-  return;
-}
+// ── Atajos de teclado ──────────────────────────────────────────
+document.getElementById('btn-atajos').onclick = () => abrirModal('atajos-overlay');
 
-try {
-  const bOpen = document.getElementById('mini-open');
-  if (bOpen) bOpen.onclick = () => { /* deshabilitado */ };
-  const bClose = document.getElementById('mini-close');
-  if (bClose) bClose.onclick = () => { ocultarMiniplayer(); };
-} catch (e) { /* silencioso */ }
-/* === fin miniplayer DESACTIVADO === */
+document.addEventListener('keydown', (e) => {
+    const playerVisible = document.getElementById('vista-player').style.display !== 'none';
+    if (!playerVisible) return;
+    const enInput = ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName);
+    if (enInput) return;
+    const videoEl = document.getElementById('player-video');
+    switch (e.key) {
+        case ' ':
+        case 'k':
+            e.preventDefault();
+            videoEl.paused ? videoEl.play().catch(()=>{}) : videoEl.pause();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            videoEl.currentTime = Math.max(0, videoEl.currentTime - 10);
+            mostrarToast('⏪ −10s', 900);
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            videoEl.currentTime = Math.min(videoEl.duration || 0, videoEl.currentTime + 10);
+            mostrarToast('⏩ +10s', 900);
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            videoEl.volume = Math.min(1, videoEl.volume + 0.1);
+            mostrarToast(`🔊 ${Math.round(videoEl.volume*100)}%`, 900);
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            videoEl.volume = Math.max(0, videoEl.volume - 0.1);
+            mostrarToast(`🔉 ${Math.round(videoEl.volume*100)}%`, 900);
+            break;
+        case 'f':
+        case 'F':
+            e.preventDefault();
+            if (!document.fullscreenElement) videoEl.requestFullscreen().catch(()=>{});
+            else document.exitFullscreen().catch(()=>{});
+            break;
+        case 'm':
+        case 'M':
+            e.preventDefault();
+            videoEl.muted = !videoEl.muted;
+            mostrarToast(videoEl.muted ? '🔇 Silenciado' : '🔊 Sonido activado', 900);
+            break;
+    }
+});
+
+// ── Bio del canal ──────────────────────────────────────────────
+document.getElementById('btn-editar-bio').onclick = () => {
+    const form = document.getElementById('canal-bio-form');
+    const bioActual = document.getElementById('canal-bio').textContent;
+    document.getElementById('bio-textarea').value = bioActual;
+    form.classList.toggle('visible');
+};
+document.getElementById('btn-cancelar-bio').onclick = () => {
+    document.getElementById('canal-bio-form').classList.remove('visible');
+};
+document.getElementById('btn-guardar-bio').onclick = async () => {
+    const bio = document.getElementById('bio-textarea').value.trim();
+    const btn = document.getElementById('btn-guardar-bio');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API}/perfil/bio`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...cabecerasAuth() },
+            body: JSON.stringify({ bio })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al guardar.');
+        document.getElementById('canal-bio').textContent = data.bio;
+        document.getElementById('canal-bio-form').classList.remove('visible');
+        mostrarToast('✅ Descripción actualizada.');
+    } catch (e) { mostrarToast(e.message || 'Error al guardar la bio.'); }
+    finally { btn.disabled = false; }
+};
 
 window.addEventListener('load', () => {
     inicializarTema();
